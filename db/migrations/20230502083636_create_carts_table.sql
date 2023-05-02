@@ -1,0 +1,14 @@
+-- migrate:up
+CREATE TABLE carts (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  amount INT NOT NULL,
+  user_id INT NOT NULL,
+  book_id INT NOT NULL,
+  is_subscribe BOOLEAN NOT NULL DEFAULT 0,
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (book_id) REFERENCES books (id),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  )
+-- migrate:down
+DROP TABLE carts;
