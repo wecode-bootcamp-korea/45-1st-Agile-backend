@@ -11,16 +11,6 @@ const routes = require('./routes');
 
 const dataSource = require('./models/dataSource');
 
-dataSource
-  .initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
-  .catch((err) => {
-    console.log('Error occurred during Data Source initialization', err);
-    dataSource.destroy();
-  });
-
 const app = express();
 
 app.use(cors());
@@ -41,5 +31,15 @@ const start = async () => {
     console.error(err);
   }
 };
+
+dataSource
+  .initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.log('Error occurred during Data Source initialization', err);
+    dataSource.destroy();
+  });
 
 start();
