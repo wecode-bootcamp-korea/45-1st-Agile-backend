@@ -10,7 +10,7 @@ CREATE TABLE books (
   price DECIMAL(10,2) NOT NULL,
   quantity INT NOT NULL,
   sub_category_id INT NOT NULL,
-  is_subscribe BOOLEAN NOT NULL 0,
+  is_subscribe BOOLEAN NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (sub_category_id) REFERENCES sub_categories (id)

@@ -1,4 +1,4 @@
---migrate:up
+-- migrate:up
 CREATE TABLE orders (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   order_number VARCHAR(100) NOT NULL,
