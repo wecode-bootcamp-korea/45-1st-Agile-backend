@@ -4,10 +4,10 @@ CREATE TABLE order_items (
   quantity INT NOT NULL,
   book_id INT NOT NULL,
   order_id INT NOT NULL,
-  FOREIGN KEY (book_id) REFERENCES books (id),
-  FOREIGN KEY (order_id) REFERENCES orders (id),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  FOREIGN KEY (book_id) REFERENCES books (id),
+  FOREIGN KEY (order_id) REFERENCES orders (id)
   )
 -- migrate:down
 DROP TABLE order_items;
