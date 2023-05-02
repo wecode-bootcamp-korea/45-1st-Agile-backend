@@ -1,6 +1,3 @@
-// const dotenv = require('dotenv');
-// dotenv.config();
-
 require('dotenv').config();
 
 const express = require('express');
@@ -9,7 +6,7 @@ const morgan = require('morgan');
 
 const routes = require('./routes');
 
-const dataSource = require('./models/dataSource');
+const dataSource = require('./model/dataSource');
 
 const app = express();
 

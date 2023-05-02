@@ -9,7 +9,7 @@ const signUp = async (req, res) => {
     adress,
     gender,
     birthDate,
-    points = 100000,
+    points = 100000.0,
   } = req.body;
 
   if (
