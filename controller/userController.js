@@ -1,12 +1,14 @@
+const { catchAsync } = require('../middleware/error.js');
+const { isExistedUser } = require('../model/userDao.js');
 const userService = require('../service/userService.js');
 
-const signUp = async (req, res) => {
+const signUp = catchAsync(async (req, res) => {
   const {
     email,
     password,
     name,
     phoneNumber,
-    adress,
+    address,
     gender,
     birthDate,
     points = 100000.0,
@@ -17,7 +19,7 @@ const signUp = async (req, res) => {
     !password ||
     !name ||
     !phoneNumber ||
-    !adress ||
+    !address ||
     !gender ||
     !birthDate
   ) {
@@ -31,7 +33,7 @@ const signUp = async (req, res) => {
     password,
     name,
     phoneNumber,
-    adress,
+    address,
     gender,
     birthDate,
     points
@@ -39,7 +41,7 @@ const signUp = async (req, res) => {
   return res.status(201).json({
     message: 'SIGNUP_SUCCESS',
   });
-};
+});
 
 module.exports = {
   signUp,

@@ -11,13 +11,19 @@ const signUp = async (
   password,
   name,
   phoneNumber,
-  adress,
+  address,
   gender,
   birthDate,
   points
 ) => {
-  await pwValidationCheck(password);
-  await emailValidationCheck(email);
+  pwValidationCheck(password);
+  emailValidationCheck(email);
+
+  if (isExistedUser(email)) {
+    const error = new Error('EMAIL_EXISTS');
+    error.statusCode = 400;
+    throw error;
+  }
 
   const saltRounds = 5;
 
@@ -28,7 +34,7 @@ const signUp = async (
     hashedPassword,
     name,
     phoneNumber,
-    adress,
+    address,
     gender,
     birthDate,
     points
@@ -37,6 +43,11 @@ const signUp = async (
   return createUser;
 };
 
+const isExistedUser = async (email) => {
+  return userDao.isExistedUser(email);
+};
+
 module.exports = {
   signUp,
+  isExistedUser,
 };
