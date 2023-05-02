@@ -26,20 +26,19 @@ const PORT = process.env.PORT;
 
 const start = async () => {
   try {
+    dataSource
+      .initialize()
+      .then(() => {
+        console.log('Data Source has been initialized!');
+      })
+      .catch((err) => {
+        console.log('Error occurred during Data Source initialization', err);
+        dataSource.destroy();
+      });
     app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
   } catch (err) {
     console.error(err);
   }
 };
-
-dataSource
-  .initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
-  .catch((err) => {
-    console.log('Error occurred during Data Source initialization', err);
-    dataSource.destroy();
-  });
 
 start();
