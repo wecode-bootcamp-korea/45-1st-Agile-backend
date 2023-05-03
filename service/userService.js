@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const userDao = require('../model/userDao');
+const userDao = require('../models/userDao');
+const { emailValidationCheck } = require('../utils/validation-check.js');
 
 const login = async (email, password) => {
-  await emailValidationCheck(email);
+  emailValidationCheck(email);
 
   const user = await userDao.getUserByEmail(email);
 
@@ -17,12 +18,6 @@ const login = async (email, password) => {
   return jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 };
 
-const getUserById = async (id) => {
-  return userDao.getUserById(id);
-};
-
 module.exports = {
-  signUp,
   login,
-  getUserById,
 };
