@@ -3,6 +3,7 @@ const { catchAsync } = require('../middlewares/error.js');
 
 const getBookById = catchAsync(async (req, res) => {
   const { bookId } = req.params;
+
   if (!bookId) {
     const error = new Error('KEY_ERROR');
     error.statusCode = 400;
