@@ -21,6 +21,28 @@ const getReviewsByBookId = async (bookId) => {
   }
 };
 
+const isExistedReview = async (bookId) => {
+  try {
+    const [result] = await dataSource.query(
+      `
+        SELECT EXISTS (
+            SELECT
+            id
+            FROM reviews 
+            WHERE book_id = ?
+        ) reviewExists
+        `,
+      [bookId]
+    );
+    return !!parseInt(result.reviewExists);
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   getReviewsByBookId,
+  isExistedReview,
 };
