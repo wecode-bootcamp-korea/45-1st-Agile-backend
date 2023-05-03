@@ -37,28 +37,25 @@ const signUp = catchAsync(async (req, res) => {
     birthDate,
     points
   );
+
   return res.status(201).json({
     message: 'SIGNUP_SUCCESS',
   });
 });
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      const error = new Error('KEY_ERROR');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const accessToken = await userService.login(email, password);
-    return res.status(200).json({ accessToken });
-  } catch (error) {
-    console.log(error);
-    return res.status(error.statusCode || 500).json({ message: error.message });
+  if (!email || !password) {
+    const error = new Error('KEY_ERROR');
+    error.statusCode = 400;
+    throw error;
   }
-};
+
+  const accessToken = await userService.login(email, password);
+
+  return res.status(200).json({ accessToken });
+});
 
 module.exports = {
   signUp,

@@ -57,7 +57,7 @@ const getUserByEmail = async (email) => {
 
     return user;
   } catch (error) {
-    error = new Error(DATABASE_CONNECTION_ERROR);
+    error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
     throw error;
   }
