@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userDao = require('../models/userDao');
 const {
@@ -43,11 +44,26 @@ const signUp = async (
   return createUser;
 };
 
+const login = async (email, password) => {
+  emailValidationCheck(email);
+
+  const user = await userDao.getUserByEmail(email);
+
+  if (!user || !bcrypt.compare(password, user.password)) {
+    const error = new Error('INVALID_EMAIL_OR_PASSWORD');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  return jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+};
+
 const isExistedUser = async (email) => {
   return userDao.isExistedUser(email);
 };
 
 module.exports = {
   signUp,
+  login,
   isExistedUser,
 };
