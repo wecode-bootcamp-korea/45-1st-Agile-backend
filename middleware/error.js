@@ -16,5 +16,3 @@ module.exports = {
   catchAsync,
   globalErrorHandler,
 };
-
-// study closure to further understand

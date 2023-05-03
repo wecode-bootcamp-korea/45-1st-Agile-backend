@@ -28,11 +28,10 @@ const createUser = async (
       `,
       [email, password, name, phoneNumber, address, gender, birthDate, points]
     );
-  } catch (err) {
-    console.log(err);
-    err = new Error(err.message);
-    err.statusCode = 500;
-    throw err;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
   }
 };
 
@@ -50,11 +49,10 @@ const isExistedUser = async (email) => {
       [email]
     );
     return !!parseInt(result.idExists);
-  } catch (err) {
-    console.log(err);
-    err = new Error(err.message);
-    err.statusCode = 500;
-    throw err;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 500;
+    throw error;
   }
 };
 

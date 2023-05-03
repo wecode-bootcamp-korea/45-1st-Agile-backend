@@ -1,6 +1,5 @@
-const { catchAsync } = require('../middleware/error.js');
-const { isExistedUser } = require('../model/userDao.js');
 const userService = require('../service/userService.js');
+const { catchAsync } = require('../middleware/error.js');
 
 const signUp = catchAsync(async (req, res) => {
   const {
@@ -11,7 +10,7 @@ const signUp = catchAsync(async (req, res) => {
     address,
     gender,
     birthDate,
-    points = 100000.0,
+    points = parseFloat(process.env.POINTS) || 500000.0,
   } = req.body;
 
   if (

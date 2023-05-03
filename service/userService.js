@@ -19,13 +19,13 @@ const signUp = async (
   pwValidationCheck(password);
   emailValidationCheck(email);
 
-  if (isExistedUser(email)) {
+  if (await isExistedUser(email)) {
     const error = new Error('EMAIL_EXISTS');
     error.statusCode = 400;
     throw error;
   }
 
-  const saltRounds = 5;
+  const saltRounds = 10;
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
