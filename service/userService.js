@@ -10,9 +10,9 @@ const login = async (email, password) => {
   const user = await userDao.getUserByEmail(email);
 
   if (!user || !bcrypt.compare(password, user.password)) {
-    const err = new Error('INVALID_EMAIL_OR_PASSWORD');
-    err.statusCode = 401;
-    throw err;
+    const error = new Error('INVALID_EMAIL_OR_PASSWORD');
+    error.statusCode = 401;
+    throw error;
   }
 
   return jwt.sign({ id: user.id }, process.env.JWT_SECRET);
