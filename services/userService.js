@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const userDao = require('../model/userDao');
+const userDao = require('../models/userDao');
 const {
   pwValidationCheck,
   emailValidationCheck,

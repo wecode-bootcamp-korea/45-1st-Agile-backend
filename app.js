@@ -6,8 +6,8 @@ const morgan = require('morgan');
 
 const routes = require('./routes');
 
-const { dataSource } = require('./model/dataSource');
-const { globalErrorHandler } = require('./middleware/error.js');
+const { dataSource } = require('./models/dataSource');
+const { globalErrorHandler } = require('./middlewares/error.js');
 
 const app = express();
 
