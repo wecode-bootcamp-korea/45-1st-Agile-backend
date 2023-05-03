@@ -1,53 +1,44 @@
 const bookService = require('../services/bookService');
+const { catchAsync } = require('../middlewares/error');
 
-const createBookList = async (req, res) => {
-  try {
-    const {
-      title,
-      subtitle,
-      author,
-      issueDate,
-      description,
-      thumbnail,
-      price,
-      quantity,
-      subCategoryId,
-      isSubscribe,
-    } = req.body;
+const createBookList = catchAsync(async (req, res) => {
+  const {
+    title,
+    subtitle,
+    author,
+    issueDate,
+    description,
+    thumbnail,
+    price,
+    quantity,
+    subCategoryId,
+    isSubscribe,
+  } = req.body;
 
-    await bookService.createBookList(
-      title,
-      subtitle,
-      author,
-      issueDate,
-      description,
-      thumbnail,
-      price,
-      quantity,
-      subCategoryId,
-      isSubscribe
-    );
-    return res.status(201).json({ message: 'bookCreated' });
-  } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
-  }
-};
+  await bookService.createBookList(
+    title,
+    subtitle,
+    author,
+    issueDate,
+    description,
+    thumbnail,
+    price,
+    quantity,
+    subCategoryId,
+    isSubscribe
+  );
+  return res.status(201).json({ message: 'bookCreated' });
+});
 
-const getFiltering = async (req, res) => {
-  try {
-    const { categoryId, subCategoryId } = req.query;
-    const result = await bookService.getFiltering(categoryId, subCategoryId);
-    return res
-      .status(200)
-      .json({ message: 'subcategoryGetSuccess', data: result });
-  } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
-  }
-};
+const getBookList = catchAsync(async (req, res) => {
+  const { categoryId, subCategoryId } = req.query;
+  const result = await bookService.getBookList(categoryId, subCategoryId);
+  return res
+    .status(200)
+    .json({ message: 'subcategoryGetSuccess', data: result });
+});
 
 module.exports = {
   createBookList,
-  getFiltering,
+  getBookList,
 };

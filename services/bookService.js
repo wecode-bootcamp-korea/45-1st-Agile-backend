@@ -28,16 +28,13 @@ const createBookList = async (
   return bookList;
 };
 
-const getFiltering = async (categoryId, subCategoryId) => {
-  const subcategoryBooks = await bookDao.getFiltering(
-    categoryId,
-    subCategoryId
-  );
+const getBookList = async (categoryId, subCategoryId) => {
+  const subcategoryBooks = await bookDao.getBookList(categoryId, subCategoryId);
 
   return subcategoryBooks;
 };
 
 module.exports = {
   createBookList,
-  getFiltering,
+  getBookList,
 };

@@ -1,4 +1,4 @@
-const dataSource = require('./dataSource');
+const { dataSource } = require('./dataSource');
 
 const createBookList = async (
   title,
@@ -50,53 +50,46 @@ const createBookList = async (
         isSubscribe,
       ]
     );
-  } catch (err) {
-    console.log(err);
-    const error = new Error('INVALID_DATA_INPUT');
+  } catch (error) {
+    error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
   }
 };
 
-const getFiltering = async (categoryId, subCategoryId) => {
+const getBookList = async (categoryId, subCategoryId) => {
   try {
-    if (!subCategoryId) {
-      return dataSource.query(
-        `SELECT DISTINCT
-        books.title,
-        books.subtitle,
-        books.thumbnail,
-        books.price,
-        sub_categories.category_id,
-        books.sub_category_id
-      FROM books, sub_categories
-      JOIN categories ON categories.id = sub_categories.category_id
-      WHERE categories.id = ? AND books.sub_category_id = ?;`,
-        [categoryId, subCategoryId]
-      );
-    }
-    const result = await dataSource.query(
-      `SELECT DISTINCT
-        books.title,
-        books.subtitle,
-        books.thumbnail,
-        books.price,
-        sub_categories.category_id,
-        books.sub_category_id
-      FROM books, sub_categories
-      JOIN categories ON categories.id = sub_categories.category_id
-      WHERE categories.id = ? AND books.sub_category_id = ?;`,
-      [categoryId, subCategoryId]
-    );
+    const baseQuery = `SELECT DISTINCT books.title, books.subtitle, books.thumbnail, books.price
+      FROM books 
+      JOIN sub_categories ON books.sub_category_id = sub_categories.id 
+      JOIN categories ON categories.id = sub_categories.category_id`;
+    const whereConidtion = getFiltering(categoryId, subCategoryId);
+    const result = await dataSource.query(baseQuery + '\n' + whereConidtion);
     return result;
-  } catch (err) {
-    const error = new Error('INVALID_DATA_INPUT');
-    error.statusCode = 500;
+  } catch (error) {
+    console.log(error);
+    error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 400;
     throw error;
+  }
+};
+
+var getFiltering = (categoryId, subCategoryId /*, bestBooks, newBooks*/) => {
+  const conditionArr = [];
+  var whereConidtion = '';
+
+  if (categoryId) conditionArr.push(`categories.id = ${categoryId}`);
+  if (subCategoryId)
+    conditionArr.push(`books.sub_category_id = ${subCategoryId}`);
+  // if (bestBooks) conditionArr.push(``);
+  // if (newBooks) conditionArr.push();
+  if (!!conditionArr.length) {
+    whereConidtion = 'WHERE' + ' ' + conditionArr.join(' AND ');
+    return whereConidtion;
   }
 };
 
 module.exports = {
   createBookList,
-  getFiltering,
+  getBookList,
 };
