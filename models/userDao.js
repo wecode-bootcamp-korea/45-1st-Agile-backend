@@ -84,8 +84,36 @@ const isExistedUser = async (email) => {
   }
 };
 
+const getUserById = async (id) => {
+  try {
+    const [user] = await dataSource.query(
+      `
+      SELECT 
+      id, 
+        email,
+        password,
+        name,
+        phone_number,
+        address,
+        gender,
+        birth_date,
+        points
+        FROM users
+        WHERE id = ? 
+        `,
+      [id]
+    );
+    return user;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
   isExistedUser,
+  getUserById,
 };
