@@ -77,7 +77,6 @@ const getBookList = async (
     );
     return result;
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
@@ -112,15 +111,19 @@ const getOrdering = (orderBy) => {
       result = 'ORDER BY price DESC';
       break;
     default:
-      result = '';
+      result = 'ORDER BY id ASC';
       break;
   }
   return result;
 };
 
 const getLimit = (limit, offset) => {
-  let result = `LIMIT ${limit} OFFSET ${offset}`;
-  if (!limit || !offset) result = ';';
+  let result = '';
+  if (!limit) limit = 5;
+
+  if (!offset) offset = 0;
+
+  result = `LIMIT ${limit} OFFSET ${offset}`;
   return result;
 };
 
