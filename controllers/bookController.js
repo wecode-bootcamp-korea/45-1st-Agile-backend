@@ -27,15 +27,13 @@ const createBookList = catchAsync(async (req, res) => {
     subCategoryId,
     isSubscribe
   );
-  return res.status(201).json({ message: 'bookCreated' });
+  return res.status(201).json({ message: 'CREATE SUCCESS' });
 });
 
 const getBookList = catchAsync(async (req, res) => {
   const { categoryId, subCategoryId } = req.query;
   const result = await bookService.getBookList(categoryId, subCategoryId);
-  return res
-    .status(200)
-    .json({ message: 'subcategoryGetSuccess', data: result });
+  return res.status(200).json({ message: 'GET SUCCESS', data: result });
 });
 
 module.exports = {

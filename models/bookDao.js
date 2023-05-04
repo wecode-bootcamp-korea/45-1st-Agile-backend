@@ -74,21 +74,18 @@ const getBookList = async (categoryId, subCategoryId) => {
   }
 };
 
-var getFiltering = (categoryId, subCategoryId /*, bestBooks, newBooks*/) => {
+var getFiltering = (categoryId, subCategoryId) => {
   const conditionArr = [];
   var whereConidtion = '';
 
   if (categoryId) conditionArr.push(`categories.id = ${categoryId}`);
   if (subCategoryId)
     conditionArr.push(`books.sub_category_id = ${subCategoryId}`);
-  // if (bestBooks) conditionArr.push(``);
-  // if (newBooks) conditionArr.push();
   if (!!conditionArr.length) {
     whereConidtion = 'WHERE' + ' ' + conditionArr.join(' AND ');
     return whereConidtion;
   }
 };
-
 module.exports = {
   createBookList,
   getBookList,
