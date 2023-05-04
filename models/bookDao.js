@@ -77,7 +77,6 @@ const getBookList = async (
     );
     return result;
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
