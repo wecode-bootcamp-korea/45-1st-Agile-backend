@@ -1,7 +1,8 @@
 const { dataSource } = require('./dataSource');
 
-const getReviewsByBookId = async (bookId) => {
+const getReviewsByBookId = async (bookId, limit, offset) => {
   try {
+    console.log(limit);
     return await dataSource.query(
       `
         SELECT 
@@ -11,8 +12,10 @@ const getReviewsByBookId = async (bookId) => {
             user_id
         FROM reviews
         WHERE book_id = ?
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?
         `,
-      [bookId]
+      [bookId, limit, offset]
     );
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
