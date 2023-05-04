@@ -57,35 +57,58 @@ const createBookList = async (
   }
 };
 
-const getBookList = async (categoryId, subCategoryId) => {
+const getBookList = async (categoryId, subCategoryId, orderBy) => {
   try {
-    const baseQuery = `SELECT DISTINCT books.title, books.subtitle, books.thumbnail, books.price
-      FROM books 
-      JOIN sub_categories ON books.sub_category_id = sub_categories.id 
-      JOIN categories ON categories.id = sub_categories.category_id`;
+    const baseQuery = `SELECT DISTINCT b.id, b.title, b.subtitle, b.thumbnail, b.price, b.created_at, (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) best
+      FROM books b
+      JOIN sub_categories sc ON b.sub_category_id = sc.id
+      JOIN categories c ON c.id = sc.category_id`;
     const whereConidtion = getFiltering(categoryId, subCategoryId);
-    const result = await dataSource.query(baseQuery + '\n' + whereConidtion);
+    const sortQuery = getOrdering(orderBy);
+    const result = await dataSource.query(
+      baseQuery + ' ' + whereConidtion + ' ' + sortQuery
+    );
     return result;
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
   }
 };
 
-var getFiltering = (categoryId, subCategoryId) => {
+const getFiltering = (categoryId, subCategoryId) => {
   const conditionArr = [];
-  var whereConidtion = '';
+  let whereConidtion = '';
 
-  if (categoryId) conditionArr.push(`categories.id = ${categoryId}`);
-  if (subCategoryId)
-    conditionArr.push(`books.sub_category_id = ${subCategoryId}`);
+  if (categoryId) conditionArr.push(`c.id = ${categoryId}`);
+  if (subCategoryId) conditionArr.push(`b.sub_category_id = ${subCategoryId}`);
   if (!!conditionArr.length) {
     whereConidtion = 'WHERE' + ' ' + conditionArr.join(' AND ');
     return whereConidtion;
   }
+  return whereConidtion;
 };
+
+var getOrdering = (orderBy) => {
+  switch (orderBy) {
+    case 'bestBooks':
+      result = 'ORDER BY best DESC';
+      break;
+    case 'newBooks':
+      result = 'ORDER BY created_at DESC';
+      break;
+    case 'priceAsc':
+      result = 'ORDER BY price ASC';
+      break;
+    case 'priceDesc':
+      result = 'ORDER BY price DESC';
+      break;
+    default:
+      break;
+  }
+  return result;
+};
+
 module.exports = {
   createBookList,
   getBookList,

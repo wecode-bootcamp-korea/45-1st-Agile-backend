@@ -28,8 +28,12 @@ const createBookList = async (
   return bookList;
 };
 
-const getBookList = async (categoryId, subCategoryId) => {
-  const subcategoryBooks = await bookDao.getBookList(categoryId, subCategoryId);
+const getBookList = async (categoryId, subCategoryId, orderBy) => {
+  const subcategoryBooks = await bookDao.getBookList(
+    categoryId,
+    subCategoryId,
+    orderBy
+  );
 
   return subcategoryBooks;
 };
