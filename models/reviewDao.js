@@ -2,7 +2,7 @@ const { dataSource } = require('./dataSource');
 
 const getReviewsByBookId = async (bookId, limit, offset) => {
   try {
-    console.log(limit);
+    console.log(typeof limit);
     return await dataSource.query(
       `
         SELECT 

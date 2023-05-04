@@ -10,8 +10,8 @@ const getReviewsByBookId = catchAsync(async (req, res) => {
     throw error;
   }
 
-  const { limit } = req.query ? req.query : 5;
-  const { offset } = req.query ? req.query : 0;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+  const offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
   const reviews = await reviewService.getReviewsByBookId(bookId, limit, offset);
 
