@@ -3,7 +3,7 @@ const likeDao = require('../models/likeDao');
 const createDeleteLike = async (userId, bookId) => {
   let createOrDelete;
   try {
-    const isLiked = await likeDao.getLike(userId, bookId);
+    const isLiked = await likeDao.checkLike(userId, bookId);
 
     if (isLiked) {
       createOrDelete = 'Deleted Like';

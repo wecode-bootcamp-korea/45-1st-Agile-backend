@@ -19,7 +19,7 @@ const createLike = async (userId, bookId) => {
   }
 };
 
-const getLike = async (userId, bookId) => {
+const checkLike = async (userId, bookId) => {
   try {
     const [result] = await dataSource.query(
       `
@@ -58,6 +58,6 @@ const deleteLike = async (userId, bookId) => {
 
 module.exports = {
   createLike,
-  getLike,
+  checkLike,
   deleteLike,
 };

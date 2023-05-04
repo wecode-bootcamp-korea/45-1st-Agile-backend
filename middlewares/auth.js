@@ -13,19 +13,19 @@ const validateToken = async (req, res, next) => {
       throw err;
     }
 
-    const payload = await jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
     //check if user still exists
     const user = await userService.getUserById(payload.id);
 
     if (!user) {
-      const err = new Error('USER_DOES_NOT_EXIST');
-      err.statusCode = 404;
+      const err = new Error('INVALID_TOKEN');
+      err.statusCode = 401;
 
       throw err;
     }
 
-    req.user = user.id;
+    req.user = user;
 
     next();
   } catch (err) {
