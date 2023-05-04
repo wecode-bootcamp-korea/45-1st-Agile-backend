@@ -77,6 +77,7 @@ const getBookList = async (
     );
     return result;
   } catch (error) {
+    console.log(error);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
@@ -96,7 +97,7 @@ const getFiltering = (categoryId, subCategoryId) => {
   return whereConidtion;
 };
 
-var getOrdering = (orderBy) => {
+const getOrdering = (orderBy) => {
   switch (orderBy) {
     case 'bestBooks':
       result = 'ORDER BY best DESC';
@@ -118,7 +119,8 @@ var getOrdering = (orderBy) => {
 };
 
 const getLimit = (limit, offset) => {
-  const result = `LIMIT ${limit} OFFSET ${offset}`;
+  let result = `LIMIT ${limit} OFFSET ${offset}`;
+  if (!limit || !offset) result = ';';
   return result;
 };
 
