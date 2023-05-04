@@ -6,6 +6,8 @@ const userRouter = require('./userRouter');
 
 const router = express.Router();
 
+router.use(validateToken);
+
 router.use('/users', userRouter.router);
 // router.use('/books', bookRouter.router);
 // router.use('/likes', likeRouter.router);

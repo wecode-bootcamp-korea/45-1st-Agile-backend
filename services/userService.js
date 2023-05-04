@@ -62,8 +62,13 @@ const isExistedUser = async (email) => {
   return userDao.isExistedUser(email);
 };
 
+const getUserById = async (id) => {
+  return userDao.getUserById(id);
+};
+
 module.exports = {
   signUp,
   login,
   isExistedUser,
+  getUserById,
 };
