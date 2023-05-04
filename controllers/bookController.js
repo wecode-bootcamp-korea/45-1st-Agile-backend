@@ -31,11 +31,13 @@ const createBookList = catchAsync(async (req, res) => {
 });
 
 const getBookList = catchAsync(async (req, res) => {
-  const { categoryId, subCategoryId, orderBy } = req.query;
+  const { categoryId, subCategoryId, orderBy, limit, offset } = req.query;
   const result = await bookService.getBookList(
     categoryId,
     subCategoryId,
-    orderBy
+    orderBy,
+    limit,
+    offset
   );
   return res.status(200).json({ message: 'GET SUCCESS', data: result });
 });

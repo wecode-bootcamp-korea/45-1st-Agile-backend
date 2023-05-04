@@ -57,7 +57,13 @@ const createBookList = async (
   }
 };
 
-const getBookList = async (categoryId, subCategoryId, orderBy) => {
+const getBookList = async (
+  categoryId,
+  subCategoryId,
+  orderBy,
+  limit,
+  offset
+) => {
   try {
     const baseQuery = `SELECT DISTINCT b.id, b.title, b.subtitle, b.thumbnail, b.price, b.created_at, (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) best
       FROM books b
@@ -65,11 +71,13 @@ const getBookList = async (categoryId, subCategoryId, orderBy) => {
       JOIN categories c ON c.id = sc.category_id`;
     const whereConidtion = getFiltering(categoryId, subCategoryId);
     const sortQuery = getOrdering(orderBy);
+    const limitQuery = getLimit(limit, offset);
     const result = await dataSource.query(
-      baseQuery + ' ' + whereConidtion + ' ' + sortQuery
+      baseQuery + ' ' + whereConidtion + ' ' + sortQuery + ' ' + limitQuery
     );
     return result;
   } catch (error) {
+    console.log(error);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
@@ -104,8 +112,14 @@ var getOrdering = (orderBy) => {
       result = 'ORDER BY price DESC';
       break;
     default:
+      result = '';
       break;
   }
+  return result;
+};
+
+const getLimit = (limit, offset) => {
+  const result = `LIMIT ${limit} OFFSET ${offset}`;
   return result;
 };
 
