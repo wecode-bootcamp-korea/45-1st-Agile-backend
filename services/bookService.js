@@ -1,20 +1,16 @@
 const bookDao = require('../models/bookDao');
 
 const getBookById = async (bookId) => {
-  if (!(await isExistedBook(bookId))) {
+  const book = await bookDao.getBookById(bookId);
+
+  if (!book) {
     const error = new Error('BOOK_DOES_NOT_EXIST');
-    error.statusCode = 400;
+    error.statusCode = 404;
     throw error;
   }
-
-  return bookDao.getBookById(bookId);
-};
-
-const isExistedBook = async (bookId) => {
-  return bookDao.isExistedBook(bookId);
+  return book;
 };
 
 module.exports = {
   getBookById,
-  isExistedBook,
 };

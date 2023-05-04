@@ -2,7 +2,7 @@ const { dataSource } = require('./dataSource');
 
 const getBookById = async (bookId) => {
   try {
-    return await dataSource.query(
+    const [book] = await dataSource.query(
       `
             SELECT 
                 title, 
@@ -18,6 +18,8 @@ const getBookById = async (bookId) => {
             `,
       [bookId]
     );
+
+    return book;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
