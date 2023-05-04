@@ -127,7 +127,29 @@ const getLimit = (limit, offset) => {
   return result;
 };
 
+const isExistedBook = async (bookId) => {
+  try {
+    const [result] = await dataSource.query(
+      `
+        SELECT EXISTS (
+          SELECT
+          id
+          FROM books 
+          WHERE id = ?
+      ) bookExists
+      `,
+      [bookId]
+    );
+    return !!parseInt(result.bookExists);
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookList,
+  isExistedBook,
 };
