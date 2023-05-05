@@ -66,9 +66,14 @@ const getUserById = async (id) => {
   return userDao.getUserById(id);
 };
 
+const updateUserPoints = async (userId, points) => {
+  return userDao.updateUserPoints(userId, points);
+};
+
 module.exports = {
   signUp,
   login,
   isExistedUser,
   getUserById,
+  updateUserPoints,
 };

@@ -111,9 +111,27 @@ const getUserById = async (id) => {
   }
 };
 
+const updateUserPoints = async (userId, points) => {
+  try {
+    return await dataSource.query(
+      `
+      UPDATE users
+        SET points = points - ?
+        WHERE id = ? 
+        `,
+      [points, userId]
+    );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
   isExistedUser,
   getUserById,
+  updateUserPoints,
 };
