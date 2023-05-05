@@ -1,4 +1,4 @@
-const paymentService = require('../services/paymentService');
+const orderService = require('../services/orderService');
 const { catchAsync } = require('../middlewares/error');
 
 const createOrder = catchAsync(async (req, res) => {
