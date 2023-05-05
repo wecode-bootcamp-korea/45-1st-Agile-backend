@@ -1,8 +1,8 @@
-const paymentService = require('../services/bookService');
+const userService = require('../services/userService');
 const { catchAsync } = require('../middlewares/error');
 
 const getUserInfo = catchAsync(async (req, res) => {
-  const userId = req.users.id;
+  const userId = req.user.id;
 
   if (!userId) {
     const error = new Error('KEY_ERROR');
@@ -10,7 +10,7 @@ const getUserInfo = catchAsync(async (req, res) => {
     throw error;
   }
 
-  const user = await paymentService.getUserInfo(bookId);
+  const user = await userService.getUserById(userId);
 
   return res.status(200).json({ user });
 });
