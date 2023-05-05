@@ -1,11 +1,11 @@
 const express = require('express');
-const paymentController = require('../controllers/paymentController');
+const orderController = require('../controllers/orderController');
 
 const router = express.Router();
 
 const { validateToken } = require('../middlewares/auth');
 
-router.get('/user', validateToken, paymentController.getUserInfo);
+router.get('/user', validateToken, orderController.getUserInfo);
 
 module.exports = {
   router,
