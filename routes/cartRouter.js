@@ -4,7 +4,7 @@ const { validateToken } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.delete('', validateToken, cartController.deleteBook);
+router.post('', validateToken, cartController.deleteBook);
 
 module.exports = {
   router,
