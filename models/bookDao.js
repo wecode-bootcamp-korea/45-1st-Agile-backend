@@ -129,26 +129,45 @@ const getLimit = (limit, offset) => {
 
 const getBookById = async (bookId) => {
   try {
-    const [book] = await dataSource.query(
-      `
-            SELECT 
-                title, 
-                subtitle, 
-                author,
-                issue_date,
-                description,
-                thumbnail, 
-                price, 
-                is_subscribe
-            FROM books
-            WHERE books.id = ?
-            `,
-      [bookId]
+    return await dataSource.query(
+      `INSERT INTO books (
+        title,
+        subtitle,
+        author,
+        issue_date,
+        description,
+        thumbnail,
+        price,
+        quantity,
+        sub_category_id,
+        is_subscribe
+    ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+    )`,
+      [
+        title,
+        subtitle,
+        author,
+        issueDate,
+        description,
+        thumbnail,
+        price,
+        quantity,
+        subCategoryId,
+        isSubscribe,
+      ]
     );
-
-    return book;
   } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
+    error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
   }
