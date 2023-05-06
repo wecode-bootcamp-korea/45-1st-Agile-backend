@@ -3,7 +3,7 @@ const { catchAsync } = require('../middlewares/error.js');
 
 const createDeleteLike = catchAsync(async (req, res) => {
   const { bookId } = req.body;
-  const userId = req.user;
+  const userId = req.user.id;
 
   if (!bookId) {
     const error = new Error('KEY_ERROR');
