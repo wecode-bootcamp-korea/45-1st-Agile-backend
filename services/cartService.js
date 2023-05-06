@@ -1,10 +1,10 @@
 const cartDao = require('../models/cartDao');
 
-const deleteBooks = async (userId, bookId) => {
-  const deleteBooks = await cartDao.deleteBooks(userId, bookId);
+const deleteBook = async (userId, bookId) => {
+  const deleteBooks = await cartDao.deleteBook(userId, bookId);
   return deleteBooks;
 };
 
 module.exports = {
-  deleteBooks,
+  deleteBook,
 };

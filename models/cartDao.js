@@ -1,6 +1,6 @@
 const { dataSource } = require('./dataSource');
 
-const deleteBooks = async (userId, bookId) => {
+const deleteBook = async (userId, bookId) => {
   try {
     const result = await dataSource.query(
       `DELETE
@@ -19,5 +19,5 @@ const deleteBooks = async (userId, bookId) => {
 };
 
 module.exports = {
-  deleteBooks,
+  deleteBook,
 };
