@@ -1,9 +1,9 @@
 const { dataSource } = require('./dataSource');
 
-const modifyAmount = async (userId, bookId, amount) => {
+const modifyQuantity = async (userId, bookId, button) => {
   try {
     const baseQuery = `UPDATE carts`;
-    const setQuery = setCondition(amount);
+    const setQuery = setCondition(button);
     const whereQuery = `WHERE user_id =${userId} AND book_id = ${bookId}`;
     const result = await dataSource.query(
       baseQuery + ' ' + setQuery + ' ' + whereQuery
@@ -17,13 +17,13 @@ const modifyAmount = async (userId, bookId, amount) => {
   }
 };
 
-const setCondition = (amount) => {
-  if (amount == 'plus') return 'SET amount = amount + 1';
+const setCondition = (button) => {
+  if (button == 'plus') return 'SET amount = amount + 1';
 
   return 'SET amount = amount - 1';
 };
 
-const modifyResultAmount = async (userId, bookId) => {
+const modifyQuantityResult = async (userId, bookId) => {
   try {
     return dataSource.query(
       `SELECT DISTINCT
@@ -47,6 +47,6 @@ const modifyResultAmount = async (userId, bookId) => {
 };
 
 module.exports = {
-  modifyAmount,
-  modifyResultAmount,
+  modifyQuantity,
+  modifyQuantityResult,
 };

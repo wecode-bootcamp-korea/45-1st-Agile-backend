@@ -1,16 +1,19 @@
 const cartDao = require('../models/cartDao');
 
-const modifyAmount = async (userId, bookId, amount) => {
-  const modifyAmount = await cartDao.modifyAmount(userId, bookId, amount);
-  return modifyAmount;
+const modifyQuantity = async (userId, bookId, button) => {
+  const modifyQuantity = await cartDao.modifyQuantity(userId, bookId, button);
+  return modifyQuantity;
 };
 
-const modifyResultAmount = async (userId, bookId) => {
-  const modifyResultAmount = await cartDao.modifyResultAmount(userId, bookId);
-  return modifyResultAmount;
+const modifyQuantityResult = async (userId, bookId) => {
+  const modifyQuantityResult = await cartDao.modifyQuantityResult(
+    userId,
+    bookId
+  );
+  return modifyQuantityResult;
 };
 
 module.exports = {
-  modifyAmount,
-  modifyResultAmount,
+  modifyQuantity,
+  modifyQuantityResult,
 };

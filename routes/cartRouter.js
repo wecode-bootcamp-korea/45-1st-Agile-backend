@@ -4,7 +4,7 @@ const { validateToken } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.patch('', validateToken, cartController.modifyAmount);
+router.post('', validateToken, cartController.modifyQuantity);
 
 module.exports = {
   router,
