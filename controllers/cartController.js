@@ -3,7 +3,7 @@ const { catchAsync } = require('../middlewares/error');
 
 const deleteBook = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const bookId = req.body.book_id;
+  const { bookId } = req.body;
   const result = await cartService.deleteBook(userId, bookId);
   if (!result)
     return res.status(400).json({ message: 'Failed, ease check the data!' });
