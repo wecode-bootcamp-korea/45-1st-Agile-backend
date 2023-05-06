@@ -4,6 +4,20 @@ const userDao = require('../models/userDao');
 const { v4: uuidv4 } = require('uuid');
 
 const completeOrder = async (address, userId, bookId, quantity) => {
+  const book = await bookDao.getBookById(bookId);
+
+  const points = book.price * quantity;
+
+  const userPoints = await userDao.getUserById(userId);
+
+  if (userPoints < points) {
+    const error = new Error('INSUFFICIENT_BALANCE');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await userDao.updateUserPoints(userId, points);
+
   const orderNumber = uuidv4();
   const orderStatusId = await orderDao.getOrderStatusId('배송준비중');
 
@@ -13,12 +27,6 @@ const completeOrder = async (address, userId, bookId, quantity) => {
   const orderId = order.id;
 
   await orderDao.createOrderItems(quantity, bookId, orderId);
-
-  const book = await bookDao.getBookById(bookId);
-
-  const points = book.price * quantity;
-
-  await userDao.updateUserPoints(userId, points);
 
   return;
 };
