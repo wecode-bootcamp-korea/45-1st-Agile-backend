@@ -33,7 +33,6 @@ const createOrder = async (orderNumber, address, userId, orderStatusId) => {
         `,
       [orderNumber, userId, orderStatusId, address]
     );
-
     return result;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
