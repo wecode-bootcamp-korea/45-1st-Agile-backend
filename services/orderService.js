@@ -16,7 +16,7 @@ const completeOrder = async (address, userId, bookId, quantity) => {
 
   const book = await bookDao.getBookById(bookId);
 
-  const points = book.price;
+  const points = book.price * quantity;
 
   await userDao.updateUserPoints(userId, points);
 
