@@ -3,8 +3,11 @@ const userController = require('../controllers/userController');
 
 const router = express.Router();
 
+const { validateToken } = require('../middlewares/auth');
+
 router.post('/signup', userController.signUp);
 router.post('/login', userController.login);
+router.get('/user', validateToken, userController.getUserInfo);
 
 module.exports = {
   router,
