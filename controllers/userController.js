@@ -1,5 +1,5 @@
-const userService = require('../services/userService.js');
-const { catchAsync } = require('../middlewares/error.js');
+const userService = require('../services/userService');
+const { catchAsync } = require('../middlewares/error');
 
 const signUp = catchAsync(async (req, res) => {
   const {

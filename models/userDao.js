@@ -79,7 +79,7 @@ const isExistedUser = async (email) => {
     return !!parseInt(result.idExists);
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 500;
+    error.statusCode = 400;
     throw error;
   }
 };
