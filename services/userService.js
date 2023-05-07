@@ -48,8 +48,9 @@ const login = async (email, password) => {
   emailValidationCheck(email);
 
   const user = await userDao.getUserByEmail(email);
+  const passwordCheck = await bcrypt.compare(password, user.password);
 
-  if (!user || !bcrypt.compare(password, user.password)) {
+  if (!user || !passwordCheck) {
     const error = new Error('INVALID_EMAIL_OR_PASSWORD');
     error.statusCode = 401;
     throw error;
@@ -62,8 +63,13 @@ const isExistedUser = async (email) => {
   return userDao.isExistedUser(email);
 };
 
+const getUserById = async (id) => {
+  return userDao.getUserById(id);
+};
+
 module.exports = {
   signUp,
   login,
   isExistedUser,
+  getUserById,
 };
