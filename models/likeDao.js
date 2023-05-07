@@ -56,8 +56,24 @@ const deleteLike = async (userId, bookId) => {
   }
 };
 
+const deleteLists = async (userId, likeId) => {
+  try {
+    return dataSource.query(
+      `DELETE
+        FROM likes
+        WHERE user_id = ? AND id IN (?)`,
+      [userId, likeId]
+    );
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createLike,
   checkLike,
   deleteLike,
+  deleteLists,
 };
