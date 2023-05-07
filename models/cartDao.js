@@ -1,16 +1,18 @@
 const { dataSource } = require('./dataSource');
 
-const deleteBooks = async (userId, bookId) => {
+const deleteBooks = async (userId, cartId) => {
   try {
+    console.log(cartId);
     const result = await dataSource.query(
       `DELETE
       FROM carts
-      WHERE user_id = ? AND book_id = ?;
+      WHERE user_id = ? AND id IN (?);
     `,
-      [userId, bookId]
+      [userId, cartId]
     );
 
     if (!result.affectedRows) return result.affectedRows;
+
     return result;
   } catch (error) {
     error = new Error('INVALID_DATA');
