@@ -57,7 +57,22 @@ const login = catchAsync(async (req, res) => {
   return res.status(200).json({ accessToken });
 });
 
+const modifyInformation = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { password, phoneNumber, address } = req.body;
+  const result = await userService.modifyInformation(
+    userId,
+    password,
+    phoneNumber,
+    address
+  );
+
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
+});
+
 module.exports = {
   signUp,
   login,
+  modifyInformation,
 };

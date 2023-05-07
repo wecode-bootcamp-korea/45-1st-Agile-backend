@@ -67,9 +67,24 @@ const getUserById = async (id) => {
   return userDao.getUserById(id);
 };
 
+const modifyInformation = async (userId, password, phoneNumber, address) => {
+  pwValidationCheck(password);
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  return userDao.modifyInformation(
+    userId,
+    hashedPassword,
+    phoneNumber,
+    address
+  );
+};
+
 module.exports = {
   signUp,
   login,
   isExistedUser,
   getUserById,
+  modifyInformation,
 };
