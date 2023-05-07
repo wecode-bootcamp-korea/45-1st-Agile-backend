@@ -52,6 +52,16 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
       const bookId = bookIdAndQuantity[i].bookId;
 
       await orderDao.createOrderItems(quantity, bookId, orderId);
+
+      const book = await bookDao.getBookById(bookId);
+
+      if (quantity > book.quantity) {
+        const error = new Error('OUT_OF_STOCK');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      await bookDao.modifyBookQuantity(bookId, quantity);
     }
 
     await userDao.updateUserPoints(userId, totalPayment, '-');

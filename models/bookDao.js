@@ -139,6 +139,7 @@ const getBookById = async (bookId) => {
                   description,
                   thumbnail, 
                   price, 
+                  quantity,
                   is_subscribe
               FROM books
               WHERE books.id = ?
@@ -175,9 +176,27 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+const modifyBookQuantity = async (bookId, quantity) => {
+  try {
+    return await dataSource.query(
+      `
+      UPDATE books
+        SET quantity = quantity - ?
+        WHERE id = ? 
+        `,
+      [quantity, bookId]
+    );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
   isExistedBook,
+  modifyBookQuantity,
 };
