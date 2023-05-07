@@ -1,24 +1,24 @@
 const cartService = require('../services/cartService');
 const { catchAsync } = require('../middlewares/error');
 
-const cartService = require('../services/cartService.js');
-const { catchAsync } = require('../middlewares/error.js');
-
 const createCart = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { bookId } = req.params;
-  const { amount } = req.body;
-  const isSubscribe = req.body.is_subscribe;
+  const { bookId, amount, isSubscribe } = req.body;
 
-  if (!userId || !bookId || !amount) {
+  if (!bookId || !amount) {
     const error = new Error('KEY_ERROR');
     error.statusCode = 400;
     throw error;
   }
 
-  await cartService.createCart(userId, bookId, amount, isSubscribe);
+  const cart = await cartService.createCart(
+    userId,
+    bookId,
+    amount,
+    isSubscribe
+  );
 
-  return res.status(201).json({ message: 'PRODUCT_ADDED_TO_CART' });
+  return res.status(201).json({ message: 'PRODUCT_ADDED_TO_CART', data: cart });
 });
 
 const getCarts = catchAsync(async (req, res) => {
@@ -29,31 +29,22 @@ const getCarts = catchAsync(async (req, res) => {
 
 const modifyQuantity = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { bookId, button } = req.body;
-  const modifyQuantity = await cartService.modifyQuantity(
-    userId,
-    bookId,
-    button
-  );
-  if (!modifyQuantity)
-    return res.status(400).json({ message: 'Failed, ease check the data!' });
-  const result = await cartService.modifyQuantityResult(userId, bookId);
-  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
-});
+  const { cartId, quantity } = req.body;
+  const result = await cartService.modifyQuantity(userId, cartId, quantity);
 
-const deleteBook = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const { bookId } = req.body;
-  const result = await cartService.deleteBook(userId, bookId);
-  if (!result)
-    return res.status(400).json({ message: 'Failed, ease check the data!' });
-  return res.status(200).json({ message: 'DELETE SUCCESS' });
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+
+  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
 });
 
 const deleteBooks = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const bookId = req.body.book_id;
-  const result = await cartService.deleteBooks(userId, bookId);
+  const { cartId } = req.query;
+  //:3000/carts?cartId=1&cartId=2
+  //:3000/carts?cartId=1,2 -> cartId.split(',')
+
+  const result = await cartService.deleteBooks(userId, cartId);
+
   if (!result)
     return res.status(400).json({ message: 'Failed, ease check the data!' });
   res.status(200).json({ message: 'DELETE SUCCESS' });

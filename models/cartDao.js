@@ -2,7 +2,7 @@ const { dataSource } = require('./dataSource');
 
 const createCart = async (userId, bookId, amount, isSubscribe) => {
   try {
-    return await dataSource.query(
+    const result = await dataSource.query(
       `
         INSERT INTO carts (
             user_id,
@@ -15,6 +15,22 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
       `,
       [userId, bookId, amount, isSubscribe]
     );
+    const [cart] = await dataSource.query(
+      `SELECT DISTINCT
+        b.id bookId,
+        b.title,
+        b.thumbnail,
+        b.price,
+        b.is_subscribe,
+        c.amount
+      FROM carts c
+      JOIN books b ON b.id = c.book_id
+      WHERE c.id = ?
+        `,
+      [result.insertedId]
+    );
+
+    return cart;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
@@ -64,34 +80,22 @@ const getCarts = async (userId) => {
   }
 };
 
-const modifyQuantity = async (userId, bookId, button) => {
+const modifyQuantity = async (userId, cartId, amount) => {
   try {
-    const baseQuery = `UPDATE carts`;
-    const setQuery = setCondition(button);
-    const whereQuery = `WHERE user_id =${userId} AND book_id = ${bookId}`;
     const result = await dataSource.query(
-      baseQuery + ' ' + setQuery + ' ' + whereQuery
+      `
+        UPDATE carts
+        SET amount = ?
+        WHERE user_id = ?  AND cart_id =?
+      `,
+      [amount, userId, cartId]
     );
+
     if (!result.affectedRows) return result.affectedRows;
-    return result;
-  } catch (error) {
-    error = new Error('INVALID_DATA');
-    error.statusCode = 400;
-    throw error;
-  }
-};
 
-const setCondition = (button) => {
-  if (button == 'plus') return 'SET amount = amount + 1';
-
-  return 'SET amount = amount - 1';
-};
-
-const modifyQuantityResult = async (userId, bookId) => {
-  try {
-    return dataSource.query(
+    const [cart] = await dataSource.query(
       `SELECT DISTINCT
-        b.id,
+        b.id bookId,
         b.title,
         b.thumbnail,
         b.price,
@@ -99,10 +103,12 @@ const modifyQuantityResult = async (userId, bookId) => {
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
-      WHERE c.user_id = ? AND c.book_id = ?
+      WHERE c.id = ?
         `,
-      [userId, bookId]
+      [cartId]
     );
+
+    return cart;
   } catch (error) {
     error = new Error('INVALID_DATA');
     error.statusCode = 400;
@@ -110,35 +116,18 @@ const modifyQuantityResult = async (userId, bookId) => {
   }
 };
 
-const deleteBook = async (userId, bookId) => {
-  try {
-    const result = await dataSource.query(
-      `DELETE
-     FROM carts
-     WHERE user_id = ? AND book_id = ?
-    `,
-      [userId, bookId]
-    );
-    if (!result.affectedRows) return result.affectedRows;
-    return result;
-  } catch (error) {
-    error = new Error('INVALID_DATA');
-    error.statusCode = 400;
-    throw error;
-  }
-};
-
-const deleteBooks = async (userId, bookId) => {
+const deleteBooks = async (userId, cartId) => {
   try {
     const result = await dataSource.query(
       `DELETE
       FROM carts
-      WHERE user_id = ? AND book_id = ?;
+      WHERE user_id = ? AND cart_id IN (?);
     `,
-      [userId, bookId]
+      [userId, cartId]
     );
 
     if (!result.affectedRows) return result.affectedRows;
+
     return result;
   } catch (error) {
     error = new Error('INVALID_DATA');
@@ -150,7 +139,5 @@ module.exports = {
   checkCart,
   getCarts,
   modifyQuantity,
-  modifyQuantityResult,
-  deleteBook,
   deleteBooks,
 };

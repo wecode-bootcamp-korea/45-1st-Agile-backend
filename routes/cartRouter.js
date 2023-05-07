@@ -4,11 +4,11 @@ const { validateToken } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/:bookId', validateToken, cartController.createCart);
+router.post('', validateToken, cartController.createCart);
 router.get('', validateToken, cartController.getCarts);
-router.post('', validateToken, cartController.modifyQuantity);
-router.post('', validateToken, cartController.deleteBook);
-router.post('', validateToken, cartController.deleteBooks);
+
+router.patch('/:cartId', validateToken, cartController.modifyQuantity);
+router.delete('', validateToken, cartController.deleteBooks);
 
 module.exports = {
   router,
