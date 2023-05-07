@@ -33,7 +33,22 @@ const createOrder = async (orderNumber, address, userId, orderStatusId) => {
         `,
       [orderNumber, userId, orderStatusId, address]
     );
-    return result;
+
+    const [order] = await dataSource.query(
+      `SELECT 
+        o.id,
+        o.order_number,
+        o.address,
+        o.user_id,
+        os.status
+      FROM orders o
+      JOIN order_status os ON o.order_status_id = os.id
+      WHERE o.id = ?
+        `,
+      [result.insertId]
+    );
+
+    return order;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;

@@ -37,7 +37,12 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
     const orderNumber = uuidv4();
     const orderStatusId = await orderDao.getOrderStatusId('배송준비중');
 
-    await orderDao.createOrder(orderNumber, address, userId, orderStatusId.id);
+    const order = await orderDao.createOrder(
+      orderNumber,
+      address,
+      userId,
+      orderStatusId.id
+    );
 
     for (let i = 0; i < bookIdAndQuantity.length; i++) {
       const order = await getOrder(orderNumber);
@@ -53,10 +58,9 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
 
     await queryRunner.commitTransaction();
 
-    return;
+    return order;
   } catch (error) {
     await queryRunner.rollbackTransaction();
-
     error = new Error('CONNECTION_LOST');
     error.statusCode = 400;
     throw error;
