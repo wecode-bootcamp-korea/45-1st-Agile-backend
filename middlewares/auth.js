@@ -19,7 +19,7 @@ const validateToken = async (req, res, next) => {
     const user = await userService.getUserById(payload.id);
 
     if (!user) {
-      const err = new Error('INVALID_TOKEN');
+      const err = new Error('INVALID_USER');
       err.statusCode = 401;
 
       throw err;
