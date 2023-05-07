@@ -54,7 +54,12 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
       await orderDao.createOrderItems(quantity, bookId, orderId);
     }
 
-    await userDao.updateUserPoints(userId, points);
+    await userDao.updateUserPoints(userId, totalPayment, '-');
+
+    if (totalPayment > 70000) {
+      pointReward = totalPayment * 0.02;
+      await userDao.updateUserPoints(userId, pointReward, '+');
+    }
 
     await queryRunner.commitTransaction();
 

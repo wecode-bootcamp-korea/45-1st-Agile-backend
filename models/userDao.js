@@ -111,12 +111,12 @@ const getUserById = async (id) => {
   }
 };
 
-const updateUserPoints = async (userId, points) => {
+const updateUserPoints = async (userId, points, plusOrMinus) => {
   try {
     return await dataSource.query(
       `
       UPDATE users
-        SET points = points - ?
+        SET points = points ${plusOrMinus} ?
         WHERE id = ? 
         `,
       [points, userId]
