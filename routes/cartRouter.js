@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('', validateToken, cartController.getCarts);
 router.post('', validateToken, cartController.modifyQuantity);
+router.post('', validateToken, cartController.deleteBook);
 
 module.exports = {
   router,

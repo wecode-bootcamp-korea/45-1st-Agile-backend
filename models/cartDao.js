@@ -40,6 +40,24 @@ const modifyQuantity = async (userId, bookId, button) => {
   }
 };
 
+const deleteBook = async (userId, bookId) => {
+  try {
+    const result = await dataSource.query(
+      `DELETE
+     FROM carts
+     WHERE user_id = ? AND book_id = ?
+    `,
+      [userId, bookId]
+    );
+    if (!result.affectedRows) return result.affectedRows;
+    return result;
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const setCondition = (button) => {
   if (button == 'plus') return 'SET amount = amount + 1';
 
@@ -73,4 +91,5 @@ module.exports = {
   getCarts,
   modifyQuantity,
   modifyQuantityResult,
+  deleteBook,
 };
