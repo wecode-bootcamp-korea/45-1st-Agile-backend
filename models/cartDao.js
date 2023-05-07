@@ -28,7 +28,6 @@ const modifyQuantity = async (userId, cartId, amount) => {
 
     return cart;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;

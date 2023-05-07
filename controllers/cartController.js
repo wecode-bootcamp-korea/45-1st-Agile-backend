@@ -3,7 +3,7 @@ const { catchAsync } = require('../middlewares/error');
 
 const modifyQuantity = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { cartId, amount } = req.query;
+  const { cartId, amount } = req.body;
   const result = await cartService.modifyQuantity(userId, cartId, amount);
 
   if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
