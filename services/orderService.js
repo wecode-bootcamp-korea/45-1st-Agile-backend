@@ -5,11 +5,11 @@ const { v4: uuidv4 } = require('uuid');
 const { dataSource } = require('../models/dataSource');
 
 const completeOrders = async (address, userId, bookIdAndQuantity) => {
-  let queryRunner;
+  const queryRunner = dataSource.createQueryRunner();
+
+  await queryRunner.connect();
 
   try {
-    queryRunner = dataSource.createQueryRunner();
-
     await queryRunner.startTransaction();
 
     let points = 0;
@@ -21,9 +21,7 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
 
       const bookPrice = book.price;
       const quantity = bookIdAndQuantity[i].quantity;
-
       const point = bookPrice * quantity;
-
       points += point;
     }
 
