@@ -2,7 +2,7 @@ const { dataSource } = require('./dataSource');
 
 const createCart = async (userId, bookId, amount, isSubscribe) => {
   try {
-    return await dataSource.query(
+    const result = await dataSource.query(
       `
         INSERT INTO carts (
             user_id,
@@ -15,6 +15,22 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
       `,
       [userId, bookId, amount, isSubscribe]
     );
+    const [cart] = await dataSource.query(
+      `SELECT DISTINCT
+        b.id bookId,
+        b.title,
+        b.thumbnail,
+        b.price,
+        b.is_subscribe,
+        c.amount
+      FROM carts c
+      JOIN books b ON b.id = c.book_id
+      WHERE c.id = ?
+        `,
+      [result.insertedId]
+    );
+
+    return cart;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;

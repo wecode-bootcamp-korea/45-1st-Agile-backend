@@ -5,7 +5,7 @@ const { validateToken } = require('../middlewares/auth.js');
 
 const router = express.Router();
 
-router.post('/:bookId', validateToken, cartController.createCart);
+router.post('', validateToken, cartController.createCart);
 
 module.exports = {
   router,
