@@ -18,20 +18,27 @@ const getOrderStatusId = async (orderStatus) => {
   }
 };
 
-const createOrder = async (orderNumber, address, userId, orderStatusId) => {
+const createOrder = async (
+  orderNumber,
+  address,
+  SubscribeDeliveryTime,
+  userId,
+  orderStatusId
+) => {
   try {
     const result = await dataSource.query(
       `
           INSERT INTO orders (
               order_number,
               user_id,
-              order_status_id,
-              address
+              address,
+              subscribe_delivery_time,
+              order_status_id
               ) VALUES (
-            ?, ?, ?, ?
+            ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, userId, orderStatusId, address]
+      [orderNumber, userId, address, SubscribeDeliveryTime, orderStatusId]
     );
 
     const [order] = await dataSource.query(
@@ -39,6 +46,7 @@ const createOrder = async (orderNumber, address, userId, orderStatusId) => {
         o.id,
         o.order_number,
         o.address,
+        o.subscribe_delivery_time,
         o.user_id,
         os.status
       FROM orders o
@@ -60,7 +68,7 @@ const getOrder = async (orderNumber) => {
   try {
     const [order] = await dataSource.query(
       `
-        SELECT id, order_number, address, user_id, order_status_id
+        SELECT id, order_number, address, subscribe_delivery_time, user_id, order_status_id
             FROM orders
             WHERE order_number = ?
         `,

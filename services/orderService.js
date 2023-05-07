@@ -4,7 +4,12 @@ const userDao = require('../models/userDao');
 const { v4: uuidv4 } = require('uuid');
 const { dataSource } = require('../models/dataSource');
 
-const completeOrders = async (address, userId, bookIdAndQuantity) => {
+const completeOrders = async (
+  address,
+  userId,
+  SubscribeDeliveryTime,
+  bookIdAndQuantity
+) => {
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
@@ -40,6 +45,7 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
     const order = await orderDao.createOrder(
       orderNumber,
       address,
+      SubscribeDeliveryTime,
       userId,
       orderStatusId.id
     );

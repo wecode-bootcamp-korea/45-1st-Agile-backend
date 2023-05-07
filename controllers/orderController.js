@@ -19,11 +19,12 @@ const getUserInfo = catchAsync(async (req, res) => {
 
 const completeOrders = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { address, bookIdAndQuantity } = req.body;
+  const { address, SubscribeDeliveryTime, bookIdAndQuantity } = req.body;
 
   const order = await orderService.completeOrders(
     address,
     userId,
+    SubscribeDeliveryTime,
     bookIdAndQuantity
   );
 
