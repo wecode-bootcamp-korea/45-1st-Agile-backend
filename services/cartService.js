@@ -5,6 +5,21 @@ const getCarts = async (userId) => {
   return cartList;
 };
 
+const modifyQuantity = async (userId, bookId, button) => {
+  const modifyQuantity = await cartDao.modifyQuantity(userId, bookId, button);
+  return modifyQuantity;
+};
+
+const modifyQuantityResult = async (userId, bookId) => {
+  const modifyQuantityResult = await cartDao.modifyQuantityResult(
+    userId,
+    bookId
+  );
+  return modifyQuantityResult;
+};
+
 module.exports = {
   getCarts,
+  modifyQuantity,
+  modifyQuantityResult,
 };
