@@ -77,7 +77,7 @@ const getBookList = async (
     );
     return result;
   } catch (error) {
-    error = new Error('INVALID_DATA_INPUT');
+    error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;
   }
@@ -127,6 +127,52 @@ const getLimit = (limit, offset) => {
   return result;
 };
 
+const getBookById = async (bookId) => {
+  try {
+    return await dataSource.query(
+      `INSERT INTO books (
+        title,
+        subtitle,
+        author,
+        issue_date,
+        description,
+        thumbnail,
+        price,
+        quantity,
+        sub_category_id,
+        is_subscribe
+    ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
+    )`,
+      [
+        title,
+        subtitle,
+        author,
+        issueDate,
+        description,
+        thumbnail,
+        price,
+        quantity,
+        subCategoryId,
+        isSubscribe,
+      ]
+    );
+  } catch (error) {
+    error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const isExistedBook = async (bookId) => {
   try {
     const [result] = await dataSource.query(
@@ -151,5 +197,6 @@ const isExistedBook = async (bookId) => {
 module.exports = {
   createBookList,
   getBookList,
+  getBookById,
   isExistedBook,
 };
