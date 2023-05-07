@@ -12,7 +12,7 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
   try {
     await queryRunner.startTransaction();
 
-    let points = 0;
+    let totalPayment = 0;
 
     for (let i = 0; i < bookIdAndQuantity.length; i++) {
       const bookId = bookIdAndQuantity[i].bookId;
@@ -22,13 +22,13 @@ const completeOrders = async (address, userId, bookIdAndQuantity) => {
       const bookPrice = book.price;
       const quantity = bookIdAndQuantity[i].quantity;
       const point = bookPrice * quantity;
-      points += point;
+      totalPayment += point;
     }
 
     const user = await userDao.getUserById(userId);
     const userPoints = user.points;
 
-    if (userPoints < points) {
+    if (userPoints < totalPayment) {
       const error = new Error('INSUFFICIENT_BALANCE');
       error.statusCode = 404;
       throw error;
