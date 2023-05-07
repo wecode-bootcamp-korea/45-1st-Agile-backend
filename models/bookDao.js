@@ -115,7 +115,7 @@ const getOrdering = (orderBy) => {
     case 'priceDesc':
       return 'ORDER BY price DESC';
     default:
-      return 'ORDER BY id ASC';
+      return 'ORDER BY id DESC';
   }
 };
 
