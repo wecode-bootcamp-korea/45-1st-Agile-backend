@@ -152,6 +152,25 @@ const getBookById = async (bookId) => {
   }
 };
 
+const getBooksPrice = async (bookIds) => {
+  try {
+    const result = await dataSource.query(
+      `
+        SELECT books.price
+        FROM books
+        WHERE books.id IN (?)
+    `,
+      [bookIds]
+    );
+
+    return result;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const isExistedBook = async (bookId) => {
   try {
     const [result] = await dataSource.query(
@@ -194,7 +213,7 @@ module.exports = {
   createBookList,
   getBookById,
   getBookList,
-  getBookById,
   isExistedBook,
   modifyBookQuantity,
+  getBooksPrice,
 };
