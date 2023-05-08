@@ -172,9 +172,41 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+const modifyReview = async (userId, bookId, content, score) => {
+  try {
+    const result = await dataSource.query(
+      `UPDATE reviews
+        SET content = ?,
+        score = ?
+        WHERE user_id = ? AND book_id = ?`,
+      [content, score, userId, bookId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    const [review] = await dataSource.query(
+      `SELECT
+        id,
+        content,
+        score
+      FROM reviews
+      WHERE user_id = ? AND book_id = ?
+      `,
+      [userId, bookId]
+    );
+    return review;
+  } catch (error) {
+    console.log(error.message);
+    error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookById,
   getBookList,
   isExistedBook,
+  modifyReview,
 };
