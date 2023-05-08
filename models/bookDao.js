@@ -74,7 +74,7 @@ const getBookList = async (
         b.price,
         b.quantity,
         b.created_at createdAt,
-        (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) best
+        (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) countLikes
       FROM books b
       JOIN sub_categories sc ON b.sub_category_id = sc.id
       JOIN categories c ON c.id = sc.category_id`;
