@@ -68,6 +68,8 @@ const getUserById = async (id) => {
 };
 
 const modifyInformation = async (userId, password, phoneNumber, address) => {
+  let passwordResult;
+  let informationResult;
   if (password) {
     pwValidationCheck(password);
 
@@ -83,6 +85,8 @@ const modifyInformation = async (userId, password, phoneNumber, address) => {
       phoneNumber,
       address
     );
+
+    return passwordResult, informationResult;
   }
 };
 

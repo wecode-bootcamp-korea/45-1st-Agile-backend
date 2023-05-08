@@ -130,7 +130,6 @@ const modifyPassword = async (userId, hashedPassword) => {
 
 const modifyInformation = async (userId, phoneNumber, address) => {
   try {
-    console.log('222');
     const result = await dataSource.query(
       `UPDATE users
         SET phone_number = ?,
@@ -152,7 +151,6 @@ const modifyInformation = async (userId, phoneNumber, address) => {
     );
     return user;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
