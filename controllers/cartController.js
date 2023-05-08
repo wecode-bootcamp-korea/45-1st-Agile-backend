@@ -1,18 +1,5 @@
-<<<<<<< HEAD
 const cartService = require('../services/cartService');
 const { catchAsync } = require('../middlewares/error');
-
-const getCarts = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const result = await cartService.getCarts(userId);
-  return res.status(200).json({ message: 'GET SUCCESS', data: result });
-});
-
-module.exports = {
-  getCarts,
-=======
-const cartService = require('../services/cartService.js');
-const { catchAsync } = require('../middlewares/error.js');
 
 const createCart = catchAsync(async (req, res) => {
   const userId = req.user.id;
@@ -34,7 +21,24 @@ const createCart = catchAsync(async (req, res) => {
   return res.status(201).json({ message: 'PRODUCT_ADDED_TO_CART', data: cart });
 });
 
+const getCarts = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const result = await cartService.getCarts(userId);
+  return res.status(200).json({ message: 'GET SUCCESS', data: result });
+});
+
+const modifyQuantity = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { cartId, amount } = req.body;
+  const result = await cartService.modifyQuantity(userId, cartId, amount);
+
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+
+  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
+});
+
 module.exports = {
   createCart,
->>>>>>> main
+  getCarts,
+  modifyQuantity,
 };
