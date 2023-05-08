@@ -172,9 +172,35 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+const createReview = async (userId, bookId, content, score) => {
+  try {
+    const result = await dataSource.query(
+      `INSERT INTO reviews (
+        user_id,
+        book_id,
+        content,
+        score
+        )
+      VALUES(
+        ?,
+        ?,
+        ?,
+        ?
+        )`,
+      [userId, bookId, content, score]
+    );
+    return result;
+  } catch (err) {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookById,
   getBookList,
   isExistedBook,
+  createReview,
 };

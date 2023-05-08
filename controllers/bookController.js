@@ -62,8 +62,17 @@ const getBookById = catchAsync(async (req, res) => {
   return res.status(200).json({ book });
 });
 
+const createReview = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { bookId, content, score } = req.body;
+
+  await bookService.createReview(userId, bookId, content, score);
+  return res.status(201).json({ message: 'CREATE SUCCESS' });
+});
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
+  createReview,
 };

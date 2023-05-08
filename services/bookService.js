@@ -57,8 +57,19 @@ const getBookById = async (bookId) => {
   return book;
 };
 
+const createReview = async (userId, bookId, content, score) => {
+  if (!bookId || !content || !score) {
+    const error = new Error('CHECK DATA');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return bookDao.createReview(userId, bookId, content, score);
+};
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
+  createReview,
 };
