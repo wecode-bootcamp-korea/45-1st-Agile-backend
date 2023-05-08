@@ -110,28 +110,41 @@ const getUserById = async (id) => {
   }
 };
 
-const modifyInformation = async (
-  userId,
-  hashedPassword,
-  phoneNumber,
-  address
-) => {
+const modifyPassword = async (userId, hashedPassword) => {
   try {
     const result = await dataSource.query(
       `UPDATE users
-        SET password = ?,
-        phone_number = ?,
+        SET password = ?
+      WHERE id = ?
+      `,
+      [hashedPassword, userId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+  } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const modifyInformation = async (userId, phoneNumber, address) => {
+  try {
+    console.log('222');
+    const result = await dataSource.query(
+      `UPDATE users
+        SET phone_number = ?,
         address = ?
       WHERE id = ?
       `,
-      [hashedPassword, phoneNumber, address, userId]
+      [phoneNumber, address, userId]
     );
 
     if (!result.affectedRows) return result.affectedRows;
 
     const [user] = await dataSource.query(
       `SELECT
-        phone_number,
+        phone_number phoneNumber,
         address
       FROM users
       WHERE id = ?`,
@@ -139,6 +152,7 @@ const modifyInformation = async (
     );
     return user;
   } catch (error) {
+    console.log(error.message);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
@@ -150,5 +164,6 @@ module.exports = {
   getUserByEmail,
   isExistedUser,
   getUserById,
+  modifyPassword,
   modifyInformation,
 };
