@@ -21,7 +21,7 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
@@ -67,7 +67,7 @@ const getCarts = async (userId) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
@@ -99,7 +99,7 @@ const modifyQuantity = async (userId, cartId, amount) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
