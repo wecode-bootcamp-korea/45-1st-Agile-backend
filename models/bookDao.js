@@ -57,6 +57,33 @@ const createBookList = async (
   }
 };
 
+const getBookById = async (bookId) => {
+  try {
+    const [book] = await dataSource.query(
+      `
+            SELECT 
+                title, 
+                subtitle, 
+                author,
+                issue_date,
+                description,
+                thumbnail, 
+                price, 
+                is_subscribe
+            FROM books
+            WHERE books.id = ?
+            `,
+      [bookId]
+    );
+
+    return book;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getBookList = async (
   categoryId,
   subCategoryId,
@@ -65,7 +92,16 @@ const getBookList = async (
   offset
 ) => {
   try {
-    const baseQuery = `SELECT DISTINCT b.id, b.title, b.subtitle, b.thumbnail, b.price, b.created_at, (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) best
+    const baseQuery = `
+      SELECT DISTINCT
+        b.id,
+        b.title,
+        b.subtitle,
+        b.thumbnail,
+        b.price,
+        b.quantity,
+        b.created_at createdAt,
+        (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) countLikes
       FROM books b
       JOIN sub_categories sc ON b.sub_category_id = sc.id
       JOIN categories c ON c.id = sc.category_id`;
@@ -73,7 +109,7 @@ const getBookList = async (
     const sortQuery = getOrdering(orderBy);
     const limitQuery = getLimit(limit, offset);
     const result = await dataSource.query(
-      baseQuery + ' ' + whereConidtion + ' ' + sortQuery + ' ' + limitQuery
+      [baseQuery, whereConidtion, sortQuery, limitQuery].join(' ')
     );
     return result;
   } catch (error) {
@@ -99,32 +135,20 @@ const getFiltering = (categoryId, subCategoryId) => {
 const getOrdering = (orderBy) => {
   switch (orderBy) {
     case 'bestBooks':
-      result = 'ORDER BY best DESC';
-      break;
+      return 'ORDER BY best DESC';
     case 'newBooks':
-      result = 'ORDER BY created_at DESC';
-      break;
+      return 'ORDER BY created_at DESC';
     case 'priceAsc':
-      result = 'ORDER BY price ASC';
-      break;
+      return 'ORDER BY price ASC';
     case 'priceDesc':
-      result = 'ORDER BY price DESC';
-      break;
+      return 'ORDER BY price DESC';
     default:
-      result = 'ORDER BY id ASC';
-      break;
+      return 'ORDER BY id DESC';
   }
-  return result;
 };
 
 const getLimit = (limit, offset) => {
-  let result = '';
-  if (!limit) limit = 5;
-
-  if (!offset) offset = 0;
-
-  result = `LIMIT ${limit} OFFSET ${offset}`;
-  return result;
+  return `LIMIT ${limit} OFFSET ${offset}`;
 };
 
 const isExistedBook = async (bookId) => {
@@ -150,6 +174,7 @@ const isExistedBook = async (bookId) => {
 
 module.exports = {
   createBookList,
+  getBookById,
   getBookList,
   isExistedBook,
 };
