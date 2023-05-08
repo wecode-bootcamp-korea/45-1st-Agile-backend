@@ -173,6 +173,7 @@ const isExistedBook = async (bookId) => {
 };
 
 const createReview = async (userId, bookId, content, score) => {
+  console.log(userId, bookId, content, score);
   try {
     const result = await dataSource.query(
       `INSERT INTO reviews (
