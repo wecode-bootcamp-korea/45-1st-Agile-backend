@@ -4,11 +4,11 @@ const getCarts = async (userId) => {
   try {
     return dataSource.query(
       `SELECT DISTINCT
-        b.id bookId,
+        b.id ,
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
