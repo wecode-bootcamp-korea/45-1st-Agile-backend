@@ -21,7 +21,7 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
@@ -67,7 +67,7 @@ const getCarts = async (userId) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
@@ -99,7 +99,7 @@ const modifyQuantity = async (userId, cartId, amount) => {
         b.title,
         b.thumbnail,
         b.price,
-        b.is_subscribe,
+        b.is_subscribe isSubscribe,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
@@ -116,9 +116,31 @@ const modifyQuantity = async (userId, cartId, amount) => {
   }
 };
 
+const deleteBooks = async (userId, cartId) => {
+  try {
+    console.log(cartId);
+    const result = await dataSource.query(
+      `DELETE
+      FROM carts
+      WHERE user_id = ? AND id IN (?);
+    `,
+      [userId, cartId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    return result;
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createCart,
   checkCart,
   getCarts,
   modifyQuantity,
+  deleteBooks,
 };
