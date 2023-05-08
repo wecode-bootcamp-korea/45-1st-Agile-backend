@@ -35,7 +35,7 @@ const getBookList = async (
   limit,
   offset
 ) => {
-  const subcategoryBooks = await bookDao.getBookList(
+  const bookList = await bookDao.getBookList(
     categoryId,
     subCategoryId,
     orderBy,
@@ -43,7 +43,7 @@ const getBookList = async (
     offset
   );
 
-  return subcategoryBooks;
+  return bookList;
 };
 
 const getBookById = async (bookId) => {
