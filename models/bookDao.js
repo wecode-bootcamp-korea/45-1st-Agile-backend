@@ -72,6 +72,7 @@ const getBookList = async (
         b.subtitle,
         b.thumbnail,
         b.price,
+        b.quantity,
         b.created_at createdAt,
         (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) best
       FROM books b
