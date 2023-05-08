@@ -113,7 +113,7 @@ const getBookList = async (
     );
     return result;
   } catch (error) {
-    error = new Error('INVALID_DATA_INPUT');
+    error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;
   }
