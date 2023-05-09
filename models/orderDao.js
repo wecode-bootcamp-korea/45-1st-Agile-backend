@@ -81,8 +81,7 @@ const getOrder = async (orderNumber) => {
     throw error;
   }
 };
-
-const createOrderItems = async (quantity, bookId, orderId) => {
+/*const createOrderItems = async (quantity, bookId, orderId) => {
   try {
     const result = await dataSource.query(
       `
@@ -95,6 +94,32 @@ const createOrderItems = async (quantity, bookId, orderId) => {
         )
         `,
       [quantity, bookId, orderId]
+    );
+    return result;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};*/
+
+const createOrderItems = async (bookIdAndQuantity, orderId) => {
+  try {
+    const values = [];
+
+    for (const item of bookIdAndQuantity) {
+      values.push(`(${item.bookId}, ${item.quantity}, ${orderId})`);
+    }
+
+    const result = await dataSource.query(
+      `
+        INSERT INTO order_items (
+            book_id,
+            quantity,
+            order_id
+        ) VALUES 
+            ${values.join(',')}
+        `
     );
     return result;
   } catch (error) {

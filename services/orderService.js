@@ -50,6 +50,9 @@ const completeOrders = async (
       orderStatusId.id
     );
     /*
+    1. create order items
+    2. check if quantity is enough
+    3. check update book quantity
     for (let i = 0; i < bookIdAndQuantity.length; i++) {
       const order = await getOrder(orderNumber);
       const orderId = order.id;
@@ -71,11 +74,18 @@ const completeOrders = async (
     }
     */
 
-    const quantity = bookIdAndQuantity.map((item) => item.quantity);
-    const bookId = bookIdAndQuantity.map((item) => item.bookId);
-    console.log(quantity);
-    console.log(bookId);
-    const orderId = await userDao.updateUserPoints(userId, totalPayment, '-');
+    // const quantity = bookIdAndQuantity.map((item) => item.quantity);
+    // const bookId = bookIdAndQuantity.map((item) => item.bookId);
+    const orderId = order.id;
+
+    // console.log(quantity);
+    // console.log(bookId);
+    console.log(orderId);
+
+    await orderDao.createOrderItems(bookIdAndQuantity, orderId);
+    // ---------
+
+    await userDao.updateUserPoints(userId, totalPayment, '-');
 
     if (totalPayment > 70000) {
       pointReward = totalPayment * 0.02;
