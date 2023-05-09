@@ -62,8 +62,24 @@ const getBookById = catchAsync(async (req, res) => {
   return res.status(200).json({ book });
 });
 
+const modifyReview = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { reviewId } = req.params;
+  const { content, score } = req.body;
+
+  const result = await bookService.modifyReview(
+    userId,
+    reviewId,
+    content,
+    score
+  );
+
+  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
+});
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
+  modifyReview,
 };
