@@ -57,13 +57,8 @@ const getBookById = async (bookId) => {
   return book;
 };
 
-const createReview = async (userId, bookId, content, score) => {
-  return bookDao.createReview(userId, bookId, content, score);
-};
-
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
-  createReview,
 };

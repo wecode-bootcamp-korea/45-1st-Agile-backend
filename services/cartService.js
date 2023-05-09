@@ -31,9 +31,14 @@ const modifyQuantity = async (userId, cartId, amount) => {
   return modifyQuantity;
 };
 
+const deleteBooks = async (userId, cartId) => {
+  return await cartDao.deleteBooks(userId, cartId);
+};
+
 module.exports = {
   createCart,
   checkCart,
   getCarts,
   modifyQuantity,
+  deleteBooks,
 };

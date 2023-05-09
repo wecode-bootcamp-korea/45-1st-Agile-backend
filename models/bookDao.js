@@ -101,7 +101,9 @@ const getBookList = async (
         b.price,
         b.quantity,
         b.created_at createdAt,
-        (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) countLikes
+        (SELECT COUNT(*) FROM likes l WHERE l.book_id = b.id ) likeCount,
+        (SELECT COUNT(*) FROM reviews r WHERE r.book_id = b.id ) reviewCount,
+        (SELECT ROUND(AVG(r.score), 1) FROM reviews r WHERE r.book_id = b.id ) reviewScore
       FROM books b
       JOIN sub_categories sc ON b.sub_category_id = sc.id
       JOIN categories c ON c.id = sc.category_id`;
@@ -172,36 +174,9 @@ const isExistedBook = async (bookId) => {
   }
 };
 
-const createReview = async (userId, bookId, content, score) => {
-  console.log(userId, bookId, content, score);
-  try {
-    const result = await dataSource.query(
-      `INSERT INTO reviews (
-        user_id,
-        book_id,
-        content,
-        score
-        )
-      VALUES(
-        ?,
-        ?,
-        ?,
-        ?
-        )`,
-      [userId, bookId, content, score]
-    );
-    return result;
-  } catch (err) {
-    const error = new Error('INVALID_DATA_INPUT');
-    error.statusCode = 400;
-    throw error;
-  }
-};
-
 module.exports = {
   createBookList,
   getBookById,
   getBookList,
   isExistedBook,
-  createReview,
 };
