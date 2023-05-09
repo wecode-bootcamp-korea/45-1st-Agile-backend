@@ -50,7 +50,7 @@ const getBookList = catchAsync(async (req, res) => {
 
 const getBookById = catchAsync(async (req, res) => {
   const { bookId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   if (!bookId) {
     const error = new Error('KEY_ERROR');
@@ -60,7 +60,7 @@ const getBookById = catchAsync(async (req, res) => {
 
   const book = await bookService.getBookById(bookId, userId);
 
-  return res.status(200).json({ book });
+  return res.status(200).json(book);
 });
 
 module.exports = {

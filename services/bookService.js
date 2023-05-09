@@ -1,4 +1,5 @@
 const bookDao = require('../models/bookDao');
+const likeDao = require('../models/likeDao');
 
 const createBookList = async (
   title,
@@ -47,14 +48,16 @@ const getBookList = async (
 };
 
 const getBookById = async (bookId, userId) => {
-  const book = await bookDao.getBookById(bookId, userId);
+  const book = await bookDao.getBookById(bookId);
+
+  const getLike = await likeDao.checkLike(userId, bookId);
 
   if (!book) {
     const error = new Error('BOOK_DOES_NOT_EXIST');
     error.statusCode = 404;
     throw error;
   }
-  return book;
+  return { book, getLike };
 };
 
 module.exports = {

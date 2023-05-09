@@ -69,7 +69,7 @@ const getBookById = async (bookId) => {
                 description,
                 thumbnail, 
                 price, 
-                is_subscribe isSubscribe,
+                is_subscribe isSubscribe
             FROM books
             WHERE books.id = ?
             `,
