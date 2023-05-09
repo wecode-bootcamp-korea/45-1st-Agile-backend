@@ -26,7 +26,18 @@ const getLikes = catchAsync(async (req, res) => {
   return res.status(200).json({ message: 'GET SUCCESS', data: result });
 });
 
+const deleteLikes = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { likeId } = req.query;
+  const result = await likeService.deleteLikes(userId, likeId);
+
+  if (!result) return res.status(400).json({ message: 'DELETE FAIL' });
+
+  return res.status(200).json({ message: 'DELETE SUCCESS' });
+});
+
 module.exports = {
   createDeleteLike,
   getLikes,
+  deleteLikes,
 };
