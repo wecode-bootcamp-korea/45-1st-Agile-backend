@@ -126,7 +126,7 @@ const getLimit = (limit, offset) => {
 
 const getBookById = async (bookId) => {
   try {
-    const [book] = await dataSource.query(
+    const book = await dataSource.query(
       `
               SELECT 
                   title, 
@@ -139,7 +139,7 @@ const getBookById = async (bookId) => {
                   quantity,
                   is_subscribe
               FROM books
-              WHERE books.id = ?
+              WHERE books.id in (?)
               `,
       [bookId]
     );

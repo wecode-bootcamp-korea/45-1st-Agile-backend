@@ -74,15 +74,32 @@ const completeOrders = async (
     }
     */
 
-    // const quantity = bookIdAndQuantity.map((item) => item.quantity);
     // const bookId = bookIdAndQuantity.map((item) => item.bookId);
-    const orderId = order.id;
-
     // console.log(quantity);
     // console.log(bookId);
+
+    // 1. create order items
+    const orderId = order.id;
+
     console.log(orderId);
 
     await orderDao.createOrderItems(bookIdAndQuantity, orderId);
+    // 2. check if quantity is enough
+
+    const bookId = bookIdAndQuantity.map((item) => item.bookId);
+    const quantity = bookIdAndQuantity.map((item) => item.quantity);
+
+    const bookQuantity = await bookDao.getBookById(bookId);
+
+    for (let i = 0; i < bookIdAndQuantity.length; i++) {
+      if (quantity[i] > bookQuantity[i]) {
+        const error = new Error('OUT_OF_STOCK');
+        error.statusCode = 404;
+        throw error;
+      }
+    }
+
+    console.log(bookQuantity);
     // ---------
 
     await userDao.updateUserPoints(userId, totalPayment, '-');
