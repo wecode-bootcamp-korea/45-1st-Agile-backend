@@ -1,11 +1,13 @@
 const reviewDao = require('../models/reviewDao');
 
-const getReviewsByBookId = (bookId, limit, offset) => {
-  return reviewDao.getReviewsByBookId(bookId, limit, offset);
-};
+const getReviewsByBookId = async (bookId, limit, offset) => {
+  const reviews = await reviewDao.getReviewsByBookId(bookId, limit, offset);
+  const reviewsCount = await reviewDao.getReviewsCountByBookId(bookId);
 
-const getReviewsCountByBookId = (bookId) => {
-  return reviewDao.getReviewsCountByBookId(bookId);
+  console.log(reviews);
+  console.log(reviewsCount);
+
+  return { reviewsCount, reviews };
 };
 
 const isExistedReview = (bookId) => {
@@ -14,6 +16,5 @@ const isExistedReview = (bookId) => {
 
 module.exports = {
   getReviewsByBookId,
-  getReviewsCountByBookId,
   isExistedReview,
 };

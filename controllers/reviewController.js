@@ -3,6 +3,7 @@ const { catchAsync } = require('../middlewares/error.js');
 
 const getReviewsByBookId = catchAsync(async (req, res) => {
   const { bookId } = req.params;
+  const { limit = 5, offset = 0 } = req.query;
 
   if (!bookId) {
     const error = new Error('KEY_ERROR');
@@ -10,13 +11,13 @@ const getReviewsByBookId = catchAsync(async (req, res) => {
     throw error;
   }
 
-  const limit = req.query.limit ? parseInt(req.query.limit) : 5;
-  const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+  const reviews = await reviewService.getReviewsByBookId(
+    bookId,
+    parseInt(limit),
+    parseInt(offset)
+  );
 
-  const reviews = await reviewService.getReviewsByBookId(bookId, limit, offset);
-  const reviewsCount = await reviewService.getReviewsCountByBookId(bookId);
-
-  return res.status(200).json({ reviewsCount, reviews });
+  return res.status(200).json(reviews);
 });
 
 module.exports = {
