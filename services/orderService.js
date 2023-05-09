@@ -32,7 +32,7 @@ const completeOrders = async (
 
     const user = await userDao.getUserById(userId);
     const userPoints = user.points;
-    console.log('-----1-----');
+
     if (userPoints < totalPayment) {
       const error = new Error('INSUFFICIENT_BALANCE');
       error.statusCode = 404;
@@ -41,7 +41,7 @@ const completeOrders = async (
 
     const orderNumber = uuidv4();
     const orderStatusId = await orderDao.getOrderStatusId('배송준비중');
-    console.log('-----2-----');
+
     const order = await orderDao.createOrder(
       orderNumber,
       address,
@@ -49,7 +49,7 @@ const completeOrders = async (
       userId,
       orderStatusId.id
     );
-    console.log('-----3-----');
+
     for (let i = 0; i < bookIdAndQuantity.length; i++) {
       const order = await getOrder(orderNumber);
       const orderId = order.id;
@@ -66,13 +66,12 @@ const completeOrders = async (
         error.statusCode = 404;
         throw error;
       }
-      console.log('-----4-----');
+
       await bookDao.modifyBookQuantity(bookId, quantity);
-      console.log('-----4.5-----');
     }
-    console.log('-----5-----');
+
     await userDao.updateUserPoints(userId, totalPayment, '-');
-    console.log('-----6-----');
+
     if (totalPayment > 70000) {
       pointReward = totalPayment * 0.02;
       await userDao.updateUserPoints(userId, pointReward, '+');
@@ -83,7 +82,7 @@ const completeOrders = async (
     return order;
   } catch (error) {
     await queryRunner.rollbackTransaction();
-    error = new Error('CONNECTION_LOST');
+    error = new Error(error.message);
     error.statusCode = 400;
     throw error;
   } finally {
