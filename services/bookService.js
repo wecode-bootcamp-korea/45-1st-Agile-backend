@@ -35,7 +35,7 @@ const getBookList = async (
   limit,
   offset
 ) => {
-  const subcategoryBooks = await bookDao.getBookList(
+  const bookList = await bookDao.getBookList(
     categoryId,
     subCategoryId,
     orderBy,
@@ -43,7 +43,7 @@ const getBookList = async (
     offset
   );
 
-  return subcategoryBooks;
+  return bookList;
 };
 
 const getBookById = async (bookId) => {
@@ -57,8 +57,20 @@ const getBookById = async (bookId) => {
   return book;
 };
 
+const modifyReview = async (userId, reviewId, content, score) => {
+  const review = bookDao.modifyReview(userId, reviewId, content, score);
+
+  if (!content || !score) {
+    const error = new Error('CHECK DATA');
+    error.status(400);
+    throw error;
+  }
+  return review;
+};
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
+  modifyReview,
 };

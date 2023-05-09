@@ -6,6 +6,8 @@ const { validateToken } = require('../middlewares/auth');
 const router = express.Router();
 
 router.post('', validateToken, likeController.createDeleteLike);
+router.get('', validateToken, likeController.getLikes);
+router.delete('', validateToken, likeController.deleteLists);
 
 module.exports = {
   router,

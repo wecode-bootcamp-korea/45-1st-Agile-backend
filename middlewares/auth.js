@@ -5,7 +5,6 @@ const userService = require('../services/userService');
 const validateToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-
     //check if token still exists
     if (!token) {
       const err = new Error('TOKEN_DOES_NOT_EXIST');
