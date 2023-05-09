@@ -85,7 +85,6 @@ const getLikes = async (userId) => {
       [userId]
     );
   } catch (error) {
-    console.log(error.message);
     error = new Error('CHECK DATA');
     error.statusCode = 400;
     throw error;

@@ -118,7 +118,6 @@ const modifyQuantity = async (userId, cartId, amount) => {
 
 const deleteBooks = async (userId, cartId) => {
   try {
-    console.log(cartId);
     const result = await dataSource.query(
       `DELETE
       FROM carts

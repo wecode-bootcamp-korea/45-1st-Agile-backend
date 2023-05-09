@@ -121,6 +121,7 @@ const modifyPassword = async (userId, hashedPassword) => {
     );
 
     if (!result.affectedRows) return result.affectedRows;
+    return result;
   } catch (error) {
     error = new Error('INVALID DATA');
     error.statusCode = 400;
