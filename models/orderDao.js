@@ -18,30 +18,39 @@ const getOrderStatusId = async (orderStatus) => {
   }
 };
 
-const createOrder = async (
+const completeOrder = async (
+  userId,
   orderNumber,
   address,
+  netPoint,
   SubscribeDeliveryTime,
-  userId,
-  orderStatusId
+  carts
 ) => {
+  const queryRunner = dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  const orderStatusId = await getOrderStatusId('배송준비중');
+
   try {
-    const result = await dataSource.query(
+    // - create order
+    const result = await queryRunner.query(
       `
           INSERT INTO orders (
               order_number,
-              user_id,
               address,
+              user_id,
               subscribe_delivery_time,
               order_status_id
               ) VALUES (
             ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, userId, address, SubscribeDeliveryTime, orderStatusId]
+      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId.id]
     );
 
-    const [order] = await dataSource.query(
+    const [order] = await queryRunner.query(
       `SELECT 
         o.id,
         o.order_number,
@@ -56,11 +65,57 @@ const createOrder = async (
       [result.insertId]
     );
 
+    // create order items
+    const updates = carts.map((cart) => [
+      cart.amount,
+      cart.bookId,
+      result.insertId,
+    ]);
+
+    await queryRunner.query(
+      `INSERT INTO order_items (
+        quantity,
+        book_id,  
+        order_id 
+      ) VALUES ?
+      `,
+      [updates]
+    );
+
+    // update user point
+    await queryRunner.query(
+      `
+      UPDATE users
+      SET points = ?
+      WHERE id = ? 
+        `,
+      [netPoint, userId]
+    );
+
+    // delete cart
+    const cartIds = carts.map((cart) => cart.id);
+
+    await queryRunner.query(
+      `
+        DELETE FROM carts
+        WHERE id IN (?)
+      `,
+      [cartIds]
+    );
+
+    await queryRunner.commitTransaction();
+
     return order;
   } catch (error) {
+    await queryRunner.rollbackTransaction();
+
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
     throw error;
+  } finally {
+    if (queryRunner) {
+      await queryRunner.release();
+    }
   }
 };
 
@@ -81,58 +136,10 @@ const getOrder = async (orderNumber) => {
     throw error;
   }
 };
-/*const createOrderItems = async (quantity, bookId, orderId) => {
-  try {
-    const result = await dataSource.query(
-      `
-        INSERT INTO order_items (
-            quantity,
-            book_id,
-            order_id
-        ) VALUES (
-            ?, ?, ?
-        )
-        `,
-      [quantity, bookId, orderId]
-    );
-    return result;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
-};*/
-
-const createOrderItems = async (bookIdAndQuantity, orderId) => {
-  try {
-    let values = [];
-
-    for (const item of bookIdAndQuantity) {
-      values.push(`(${item.bookId}, ${item.quantity}, ${orderId})`);
-    }
-
-    const result = await dataSource.query(
-      `
-        INSERT INTO order_items (
-            book_id,
-            quantity,
-            order_id
-        ) VALUES 
-            ${values.join(',')}
-        `
-    );
-    return result;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
-};
 
 module.exports = {
   getOrderStatusId,
-  createOrder,
+  completeOrder,
   getOrder,
-  createOrderItems,
   getOrderStatusId,
 };

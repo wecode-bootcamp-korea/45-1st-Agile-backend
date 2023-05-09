@@ -59,7 +59,33 @@ const checkCart = async (userId, bookId) => {
   }
 };
 
+const getCartsById = async (cartIds) => {
+  try {
+    const carts = await dataSource.query(
+      `
+        SELECT
+          c.id,
+          c.amount,
+          c.user_id userId,
+          c.book_id bookId,
+          b.price,
+          c.is_subscribe isSubscribe
+        FROM carts c
+        JOIN books b on b.id = c.book_id
+        WHERE c.id IN (?)
+      `,
+      [cartIds]
+    );
+    return carts;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createCart,
   checkCart,
+  getCartsById,
 };

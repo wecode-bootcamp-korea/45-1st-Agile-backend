@@ -192,7 +192,6 @@ const isExistedBook = async (bookId) => {
   }
 };
 
-/*
 const modifyBookQuantity = async (bookId, quantity) => {
   try {
     return await dataSource.query(
@@ -209,9 +208,8 @@ const modifyBookQuantity = async (bookId, quantity) => {
     throw error;
   }
 };
-*/
 
-const modifyBookQuantity = async (bookId, quantity) => {
+const modifyBooksQuantity = async (bookId, quantity) => {
   try {
     let updates = [];
 
@@ -221,10 +219,8 @@ const modifyBookQuantity = async (bookId, quantity) => {
         WHERE id = ${bookId[i]}`;
       updates.push(update);
     }
-    console.log(updates);
 
     const query = updates.join('; ');
-    console.log(`${query};`);
 
     return await dataSource.query(`${query};`);
   } catch (error) {
@@ -240,5 +236,6 @@ module.exports = {
   getBookList,
   isExistedBook,
   modifyBookQuantity,
+  modifyBooksQuantity,
   getBooksPrice,
 };
