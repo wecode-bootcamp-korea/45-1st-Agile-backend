@@ -56,7 +56,7 @@ const deleteLike = async (userId, bookId) => {
   }
 };
 
-const deleteLists = async (userId, likeId) => {
+const deleteLikes = async (userId, likeId) => {
   try {
     return dataSource.query(
       `DELETE
@@ -75,5 +75,5 @@ module.exports = {
   createLike,
   checkLike,
   deleteLike,
-  deleteLists,
+  deleteLikes,
 };
