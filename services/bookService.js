@@ -46,8 +46,8 @@ const getBookList = async (
   return bookList;
 };
 
-const getBookById = async (bookId) => {
-  const book = await bookDao.getBookById(bookId);
+const getBookById = async (bookId, userId) => {
+  const book = await bookDao.getBookById(bookId, userId);
 
   if (!book) {
     const error = new Error('BOOK_DOES_NOT_EXIST');

@@ -6,7 +6,6 @@ const validateToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
 
-    //check if token still exists
     if (!token) {
       const err = new Error('TOKEN_DOES_NOT_EXIST');
       err.statusCode = 409;
@@ -15,7 +14,6 @@ const validateToken = async (req, res, next) => {
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    //check if user still exists
     const user = await userService.getUserById(payload.id);
 
     if (!user) {
@@ -33,6 +31,37 @@ const validateToken = async (req, res, next) => {
   }
 };
 
+const validateTokenUserUndefiened = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    let user;
+
+    if (!token) {
+      user = undefined;
+    }
+
+    if (token) {
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+      user = await userService.getUserById(payload.id);
+
+      if (!user) {
+        const err = new Error('INVALID_USER');
+        err.statusCode = 401;
+
+        throw err;
+      }
+    }
+
+    req.user = user;
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   validateToken,
+  validateTokenUserUndefiened,
 };
