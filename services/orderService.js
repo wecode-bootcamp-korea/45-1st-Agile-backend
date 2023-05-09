@@ -75,8 +75,7 @@ const completeOrders = async (
     const bookId = bookIdAndQuantity.map((item) => item.bookId);
     console.log(quantity);
     console.log(bookId);
-
-    await userDao.updateUserPoints(userId, totalPayment, '-');
+    const orderId = await userDao.updateUserPoints(userId, totalPayment, '-');
 
     if (totalPayment > 70000) {
       pointReward = totalPayment * 0.02;
