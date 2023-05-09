@@ -1,7 +1,5 @@
 const express = require('express');
 
-const { validateToken } = require('../middlewares/auth');
-
 const userRouter = require('./userRouter');
 const bookRouter = require('./bookRouter');
 const cartRouter = require('./cartRouter');
