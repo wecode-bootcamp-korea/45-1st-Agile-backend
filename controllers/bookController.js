@@ -35,7 +35,7 @@ const getBookList = catchAsync(async (req, res) => {
     categoryId,
     subCategoryId,
     orderBy,
-    limit = 10,
+    limit = 9,
     offset = 0,
   } = req.query;
   const result = await bookService.getBookList(
@@ -45,7 +45,11 @@ const getBookList = catchAsync(async (req, res) => {
     limit,
     offset
   );
-  return res.status(200).json({ message: 'GET SUCCESS', data: result });
+
+  const resultCount = await bookService.getBookCount(categoryId, subCategoryId);
+  return res
+    .status(200)
+    .json({ message: 'GET SUCCESS', data: result, booksCount: resultCount });
 });
 
 const getBookById = catchAsync(async (req, res) => {
