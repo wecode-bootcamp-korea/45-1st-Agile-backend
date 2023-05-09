@@ -56,6 +56,21 @@ const deleteLike = async (userId, bookId) => {
   }
 };
 
+const deleteLikes = async (userId, likeId) => {
+  try {
+    return dataSource.query(
+      `DELETE
+        FROM likes
+        WHERE user_id = ? AND id IN (?)`,
+      [userId, likeId]
+    );
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getLikes = async (userId) => {
   try {
     return dataSource.query(
@@ -70,7 +85,6 @@ const getLikes = async (userId) => {
       [userId]
     );
   } catch (error) {
-    console.log(error.message);
     error = new Error('CHECK DATA');
     error.statusCode = 400;
     throw error;
@@ -80,6 +94,7 @@ const getLikes = async (userId) => {
 module.exports = {
   createLike,
   checkLike,
-  deleteLike,
   getLikes,
+  deleteLike,
+  deleteLikes,
 };

@@ -63,9 +63,21 @@ const getBookById = async (bookId) => {
   return book;
 };
 
+const modifyReview = async (userId, reviewId, content, score) => {
+  const review = bookDao.modifyReview(userId, reviewId, content, score);
+
+  if (!content || !score) {
+    const error = new Error('CHECK DATA');
+    error.status(400);
+    throw error;
+  }
+  return review;
+};
+
 module.exports = {
   createBookList,
   getBookList,
   getBookCount,
   getBookById,
+  modifyReview,
 };
