@@ -4,9 +4,6 @@ const getReviewsByBookId = async (bookId, limit, offset) => {
   const reviews = await reviewDao.getReviewsByBookId(bookId, limit, offset);
   const reviewsCount = await reviewDao.getReviewsCountByBookId(bookId);
 
-  console.log(reviews);
-  console.log(reviewsCount);
-
   return { reviewsCount, reviews };
 };
 
