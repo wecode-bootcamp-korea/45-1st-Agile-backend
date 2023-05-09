@@ -46,9 +46,27 @@ const deleteBooks = catchAsync(async (req, res) => {
   res.status(200).json({ message: 'DELETE SUCCESS' });
 });
 
+const addExistBook = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { bookId, amount } = req.body;
+
+  if (!bookId || !amount) {
+    const error = new Error('KEY_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const result = await cartService.addExistBook(userId, bookId, amount);
+
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+
+  return res.status(200).json({ message: 'ADDED TO CART', data: result });
+});
+
 module.exports = {
   createCart,
   getCarts,
   modifyQuantity,
   deleteBooks,
+  addExistBook,
 };

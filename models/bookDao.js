@@ -65,11 +65,11 @@ const getBookById = async (bookId) => {
                 title, 
                 subtitle, 
                 author,
-                issue_date,
+                issue_date issueDate,
                 description,
                 thumbnail, 
                 price, 
-                is_subscribe
+                is_subscribe isSubscribe
             FROM books
             WHERE books.id = ?
             `,
@@ -135,7 +135,6 @@ const getBookCount = async (categoryId, subCategoryId) => {
     );
     return result;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;
