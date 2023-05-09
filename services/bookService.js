@@ -57,8 +57,8 @@ const getBookById = async (bookId) => {
   return book;
 };
 
-const modifyReview = async (userId, bookId, content, score) => {
-  const review = bookDao.modifyReview(userId, bookId, content, score);
+const modifyReview = async (userId, reviewId, content, score) => {
+  const review = bookDao.modifyReview(userId, reviewId, content, score);
 
   if (!content || !score) {
     const error = new Error('CHECK DATA');
