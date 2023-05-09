@@ -7,15 +7,36 @@ const getReviewsByBookId = async (bookId, limit, offset) => {
         SELECT 
             content, 
             score,
-            created_at,
-            user_id
+            created_at createdAt,
+            user_id userId,
+            ( SELECT COUNT(*) 
+              FROM reviews
+              WHERE book_id = ? ) countReviews
         FROM reviews
         WHERE book_id = ?
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?
         `,
-      [bookId, limit, offset]
+      [bookId, bookId, limit, offset]
     );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const getReviewsCountByBookId = async (bookId) => {
+  try {
+    const [result] = await dataSource.query(
+      `
+        SELECT COUNT(*) count
+        FROM reviews
+        WHERE book_id = ? 
+        `,
+      [bookId]
+    );
+    return result;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
@@ -46,5 +67,6 @@ const isExistedReview = async (bookId) => {
 
 module.exports = {
   getReviewsByBookId,
+  getReviewsCountByBookId,
   isExistedReview,
 };

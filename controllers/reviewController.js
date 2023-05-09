@@ -14,8 +14,9 @@ const getReviewsByBookId = catchAsync(async (req, res) => {
   const offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
   const reviews = await reviewService.getReviewsByBookId(bookId, limit, offset);
+  const reviewsCount = await reviewService.getReviewsCountByBookId(bookId);
 
-  return res.status(200).json({ reviews });
+  return res.status(200).json({ reviewsCount, reviews });
 });
 
 module.exports = {
