@@ -61,18 +61,19 @@ const getBookById = async (bookId) => {
   try {
     const [book] = await dataSource.query(
       `
-            SELECT 
-                title, 
-                subtitle, 
-                author,
-                issue_date issueDate,
-                description,
-                thumbnail, 
-                price, 
-                is_subscribe isSubscribe
-            FROM books
-            WHERE books.id = ?
-            `,
+      SELECT 
+        title, 
+        subtitle, 
+        author,
+        issue_date issueDate,
+        description,
+        thumbnail, 
+        price,
+        quantity,
+        is_subscribe isSubscribe
+      FROM books
+      WHERE books.id = ?
+      `,
       [bookId]
     );
 
