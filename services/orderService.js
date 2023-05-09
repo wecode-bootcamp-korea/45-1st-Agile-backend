@@ -49,7 +49,7 @@ const completeOrders = async (
       userId,
       orderStatusId.id
     );
-
+    /*
     for (let i = 0; i < bookIdAndQuantity.length; i++) {
       const order = await getOrder(orderNumber);
       const orderId = order.id;
@@ -69,6 +69,12 @@ const completeOrders = async (
 
       await bookDao.modifyBookQuantity(bookId, quantity);
     }
+    */
+
+    const quantity = bookIdAndQuantity.map((item) => item.quantity);
+    const bookId = bookIdAndQuantity.map((item) => item.bookId);
+    console.log(quantity);
+    console.log(bookId);
 
     await userDao.updateUserPoints(userId, totalPayment, '-');
 
