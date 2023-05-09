@@ -8,16 +8,13 @@ const getReviewsByBookId = async (bookId, limit, offset) => {
             content, 
             score,
             created_at createdAt,
-            user_id userId,
-            ( SELECT COUNT(*) 
-              FROM reviews
-              WHERE book_id = ? ) countReviews
+            user_id userId
         FROM reviews
         WHERE book_id = ?
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?
         `,
-      [bookId, bookId, limit, offset]
+      [bookId, limit, offset]
     );
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
