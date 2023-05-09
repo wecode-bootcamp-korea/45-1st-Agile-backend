@@ -67,27 +67,17 @@ const getUserById = async (id) => {
   return userDao.getUserById(id);
 };
 
-const modifyInformation = async (userId, password, phoneNumber, address) => {
-  let passwordResult;
-  let informationResult;
-  if (password) {
-    pwValidationCheck(password);
+const modifyPassword = async (userId, password) => {
+  pwValidationCheck(password);
 
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    passwordResult = await userDao.modifyPassword(userId, hashedPassword);
-  }
+  return userDao.modifyPassword(userId, hashedPassword);
+};
 
-  if (phoneNumber || address) {
-    informationResult = await userDao.modifyInformation(
-      userId,
-      phoneNumber,
-      address
-    );
-
-    return passwordResult, informationResult;
-  }
+const modifyInformation = async (userId, phoneNumber, address) => {
+  return userDao.modifyInformation(userId, phoneNumber, address);
 };
 
 module.exports = {
@@ -95,5 +85,6 @@ module.exports = {
   login,
   isExistedUser,
   getUserById,
+  modifyPassword,
   modifyInformation,
 };
