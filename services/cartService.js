@@ -21,7 +21,24 @@ const checkCart = async (userId, bookId) => {
   return await cartDao.checkCart(userId, bookId);
 };
 
+const getCarts = async (userId) => {
+  const cartList = await cartDao.getCarts(userId);
+  return cartList;
+};
+
+const modifyQuantity = async (userId, cartId, amount) => {
+  const modifyQuantity = await cartDao.modifyQuantity(userId, cartId, amount);
+  return modifyQuantity;
+};
+
+const deleteBooks = async (userId, cartId) => {
+  return await cartDao.deleteBooks(userId, cartId);
+};
+
 module.exports = {
   createCart,
   checkCart,
+  getCarts,
+  modifyQuantity,
+  deleteBooks,
 };

@@ -1,12 +1,10 @@
 const express = require('express');
 
-const { validateToken } = require('../middlewares/auth');
-
 const userRouter = require('./userRouter');
 const bookRouter = require('./bookRouter');
 const cartRouter = require('./cartRouter');
 const likeRouter = require('./likeRouter');
-const orderRouter = require('./orderRouter.js');
+const orderRouter = require('./orderRouter');
 
 const router = express.Router();
 
