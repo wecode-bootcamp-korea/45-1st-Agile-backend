@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('', bookController.createBookList);
 router.get('', bookController.getBookList);
 router.get('/:bookId', bookController.getBookById);
-router.patch('/reviews', validateToken, bookController.modifyReview);
+router.patch('/review/:reviewId', validateToken, bookController.modifyReview);
 
 module.exports = {
   router,

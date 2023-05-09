@@ -64,7 +64,8 @@ const getBookById = catchAsync(async (req, res) => {
 
 const modifyReview = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { reviewId, content, score } = req.body;
+  const { reviewId } = req.params;
+  const { content, score } = req.body;
 
   const result = await bookService.modifyReview(
     userId,
