@@ -20,6 +20,12 @@ const createDeleteLike = catchAsync(async (req, res) => {
   return res.status(400).json({ message: result });
 });
 
+const getLikes = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const result = await likeService.getLikes(userId);
+  return res.status(200).json({ message: 'GET SUCCESS', data: result });
+});
+
 const deleteLikes = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const { likeId } = req.query;
@@ -32,5 +38,6 @@ const deleteLikes = catchAsync(async (req, res) => {
 
 module.exports = {
   createDeleteLike,
+  getLikes,
   deleteLikes,
 };
