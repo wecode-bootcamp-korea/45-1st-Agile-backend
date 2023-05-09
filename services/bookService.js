@@ -46,6 +46,12 @@ const getBookList = async (
   return bookList;
 };
 
+const getBookCount = async (categoryId, subCategoryId) => {
+  const booksCount = await bookDao.getBookCount(categoryId, subCategoryId);
+
+  return booksCount;
+};
+
 const getBookById = async (bookId) => {
   const book = await bookDao.getBookById(bookId);
 
@@ -57,13 +63,9 @@ const getBookById = async (bookId) => {
   return book;
 };
 
-const deleteReview = async (userId, reviewId) => {
-  return bookDao.deleteReview(userId, reviewId);
-};
-
 module.exports = {
   createBookList,
   getBookList,
+  getBookCount,
   getBookById,
-  deleteReview,
 };

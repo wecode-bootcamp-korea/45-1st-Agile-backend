@@ -56,8 +56,45 @@ const deleteLike = async (userId, bookId) => {
   }
 };
 
+const deleteLikes = async (userId, likeId) => {
+  try {
+    return dataSource.query(
+      `DELETE
+        FROM likes
+        WHERE user_id = ? AND id IN (?)`,
+      [userId, likeId]
+    );
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const getLikes = async (userId) => {
+  try {
+    return dataSource.query(
+      `SELECT
+        b.id,
+        b.title,
+        b.thumbnail,
+        b.price
+      FROM likes l
+      JOIN books b ON l.book_id = b.id
+      WHERE l.user_id = ?`,
+      [userId]
+    );
+  } catch (error) {
+    error = new Error('CHECK DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createLike,
   checkLike,
+  getLikes,
   deleteLike,
+  deleteLikes,
 };
