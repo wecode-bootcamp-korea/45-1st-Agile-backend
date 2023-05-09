@@ -62,8 +62,20 @@ const getBookById = catchAsync(async (req, res) => {
   return res.status(200).json({ book });
 });
 
+const deleteReview = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { reviewId } = req.params;
+
+  const result = await bookService.deleteReview(userId, reviewId);
+
+  if (!result) return res.status(400).json({ message: 'DELETE FAIL' });
+
+  return res.status(200).json({ message: 'DELETE SUCCESS' });
+});
+
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
+  deleteReview,
 };

@@ -172,9 +172,29 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+const deleteReview = async (userId, reviewId) => {
+  try {
+    const result = await dataSource.query(
+      `DELETE
+      FROM reviews
+      WHERE user_id = ? AND id = ?`,
+      [userId, reviewId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    return result;
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookById,
   getBookList,
   isExistedBook,
+  deleteReview,
 };
