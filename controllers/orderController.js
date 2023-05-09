@@ -17,14 +17,14 @@ const getUserInfo = catchAsync(async (req, res) => {
 });
 
 const completeOrders = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const { address, SubscribeDeliveryTime, bookIdAndQuantity } = req.body;
+  const user = req.user;
+  const { address, SubscribeDeliveryTime, cartId } = req.body;
 
   const order = await orderService.completeOrders(
     address,
-    userId,
+    user,
     SubscribeDeliveryTime,
-    bookIdAndQuantity
+    cartId
   );
 
   return res.status(201).json({ message: 'CREATE SUCCESS', data: order });

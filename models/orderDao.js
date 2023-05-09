@@ -21,27 +21,48 @@ const getOrderStatusId = async (orderStatus) => {
 const createOrder = async (
   orderNumber,
   address,
+  netPoint,
   SubscribeDeliveryTime,
   userId,
   orderStatusId
 ) => {
+  // - create order
+  // - create order items
+  // - update user point
+  // - delete cart
+  const queryRunner = dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  const orderStatusId = await orderDao.getOrderStatusId('배송준비중');
+
   try {
-    const result = await dataSource.query(
+    const result = await queryRunner.query(
       `
-          INSERT INTO orders (
-              order_number,
-              user_id,
-              address,
-              subscribe_delivery_time,
-              order_status_id
-              ) VALUES (
-            ?, ?, ?, ?, ?
-          )
+      INSERT INTO orders (
+          order_number,
+          user_id,
+          address,
+          subscribe_delivery_time,
+          order_status_id
+          ) VALUES (
+        ?, ?, ?, ?, ?
+      )
         `,
       [orderNumber, userId, address, SubscribeDeliveryTime, orderStatusId]
     );
 
-    const [order] = await dataSource.query(
+    await queryRunner.query(
+      `
+      UPDATE users
+      SET points = ?
+      WHERE id = ? 
+        `,
+      [netPoint, userId]
+    );
+
+    const [order] = await queryRunner.query(
       `SELECT 
         o.id,
         o.order_number,
@@ -56,11 +77,17 @@ const createOrder = async (
       [result.insertId]
     );
 
+    await queryRunner.commitTransaction();
+
     return order;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
+  } catch (err) {
+    console.log(err);
+    await queryRunner.rollbackTransaction();
+    const error = new Error('appDataSource error');
     error.statusCode = 400;
     throw error;
+  } finally {
+    await queryRunner.release();
   }
 };
 
