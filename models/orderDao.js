@@ -105,7 +105,7 @@ const getOrder = async (orderNumber) => {
 
 const createOrderItems = async (bookIdAndQuantity, orderId) => {
   try {
-    const values = [];
+    let values = [];
 
     for (const item of bookIdAndQuantity) {
       values.push(`(${item.bookId}, ${item.quantity}, ${orderId})`);

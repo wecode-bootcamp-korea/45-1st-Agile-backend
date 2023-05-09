@@ -75,8 +75,6 @@ const completeOrders = async (
     */
 
     // const bookId = bookIdAndQuantity.map((item) => item.bookId);
-    // console.log(quantity);
-    // console.log(bookId);
 
     // 1. create order items
     const orderId = order.id;
@@ -98,9 +96,11 @@ const completeOrders = async (
         throw error;
       }
     }
-
-    console.log(bookQuantity);
-    // ---------
+    // 3. update book quantity
+    console.log(quantity);
+    console.log(bookId);
+    await bookDao.modifyBookQuantity(bookId, quantity);
+    console.log('--------');
 
     await userDao.updateUserPoints(userId, totalPayment, '-');
 

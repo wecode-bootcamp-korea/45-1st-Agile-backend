@@ -192,6 +192,7 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+/*
 const modifyBookQuantity = async (bookId, quantity) => {
   try {
     return await dataSource.query(
@@ -202,6 +203,30 @@ const modifyBookQuantity = async (bookId, quantity) => {
         `,
       [quantity, bookId]
     );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+*/
+
+const modifyBookQuantity = async (bookId, quantity) => {
+  try {
+    let updates = [];
+
+    for (let i = 0; i < bookId.length; i++) {
+      const update = `UPDATE books 
+        SET quantity = quantity - ${quantity[i]} 
+        WHERE id = ${bookId[i]}`;
+      updates.push(update);
+    }
+    console.log(updates);
+
+    const query = updates.join('; ');
+    console.log(`${query};`);
+
+    return await dataSource.query(`${query};`);
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
