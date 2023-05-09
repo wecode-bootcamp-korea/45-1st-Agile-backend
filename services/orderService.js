@@ -100,7 +100,10 @@ const completeOrders = async (
     console.log(quantity);
     console.log(bookId);
     await bookDao.modifyBookQuantity(bookId, quantity);
+
     console.log('--------');
+
+    //----------------------------
 
     await userDao.updateUserPoints(userId, totalPayment, '-');
 
