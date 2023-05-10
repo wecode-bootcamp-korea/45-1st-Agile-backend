@@ -50,14 +50,17 @@ const getBookList = async (
 const getBookById = async (bookId, userId) => {
   const book = await bookDao.getBookById(bookId);
 
-  const getLike = await likeDao.checkLike(userId, bookId);
-
   if (!book) {
     const error = new Error('BOOK_DOES_NOT_EXIST');
     error.statusCode = 404;
     throw error;
   }
-  return { book, getLike };
+
+  const getLike = await likeDao.checkLike(userId, bookId);
+
+  book.isLike = getLike;
+
+  return book;
 };
 
 module.exports = {

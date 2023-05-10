@@ -36,23 +36,9 @@ const validateTokenUserUndefiened = async (req, res, next) => {
     const token = req.headers.authorization;
     let userId;
 
-    if (!token) {
-      userId = undefined;
-    }
-
     if (token) {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
-
-      const user = await userService.getUserById(payload.id);
-
-      if (!user) {
-        const err = new Error('INVALID_USER');
-        err.statusCode = 401;
-
-        throw err;
-      }
-
-      userId = user.id;
+      userId = payload.id;
     }
 
     req.userId = userId;
