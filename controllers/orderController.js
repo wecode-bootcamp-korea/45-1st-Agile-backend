@@ -47,7 +47,7 @@ const getSubscribeBooks = catchAsync(async (req, res) => {
 
   return res
     .status(200)
-    .json({ message: 'SEBSCRIBE BOOKS GET SUCCESS', result });
+    .json({ message: 'SUBSCRIBE BOOKS GET SUCCESS', result });
 });
 
 module.exports = {
