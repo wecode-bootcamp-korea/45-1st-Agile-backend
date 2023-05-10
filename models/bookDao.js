@@ -232,27 +232,6 @@ const modifyBookQuantity = async (bookId, quantity) => {
   }
 };
 
-const modifyBooksQuantity = async (bookId, quantity) => {
-  try {
-    let updates = [];
-
-    for (let i = 0; i < bookId.length; i++) {
-      const update = `UPDATE books 
-        SET quantity = quantity - ${quantity[i]} 
-        WHERE id = ${bookId[i]}`;
-      updates.push(update);
-    }
-
-    const query = updates.join('; ');
-
-    return await dataSource.query(`${query};`);
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
-};
-
 module.exports = {
   createBookList,
   getBookById,
@@ -260,6 +239,5 @@ module.exports = {
   getBookCount,
   isExistedBook,
   modifyBookQuantity,
-  modifyBooksQuantity,
   getBooksPrice,
 };

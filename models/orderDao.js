@@ -18,7 +18,7 @@ const getOrderStatusId = async (orderStatus) => {
   }
 };
 
-const completeOrder = async (
+const completeOrders = async (
   userId,
   orderNumber,
   address,
@@ -32,7 +32,7 @@ const completeOrder = async (
   await queryRunner.startTransaction();
 
   const orderStatusId = await getOrderStatusId('배송준비중');
-
+  console.log('---------3----------');
   try {
     // - create order
     const result = await queryRunner.query(
@@ -50,28 +50,15 @@ const completeOrder = async (
       [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId.id]
     );
 
-    const [order] = await queryRunner.query(
-      `SELECT 
-        o.id,
-        o.order_number,
-        o.address,
-        o.subscribe_delivery_time,
-        o.user_id,
-        os.status
-      FROM orders o
-      JOIN order_status os ON o.order_status_id = os.id
-      WHERE o.id = ?
-        `,
-      [result.insertId]
-    );
-
+    console.log('---------4----------');
+    console.log(carts);
     // create order items
     const updates = carts.map((cart) => [
       cart.amount,
       cart.bookId,
       result.insertId,
     ]);
-
+    console.log(updates);
     await queryRunner.query(
       `INSERT INTO order_items (
         quantity,
@@ -81,7 +68,7 @@ const completeOrder = async (
       `,
       [updates]
     );
-
+    console.log('---------5----------');
     // update user point
     await queryRunner.query(
       `
@@ -91,7 +78,7 @@ const completeOrder = async (
         `,
       [netPoint, userId]
     );
-
+    console.log('---------6----------');
     // delete cart
     const cartIds = carts.map((cart) => cart.id);
 
@@ -101,6 +88,33 @@ const completeOrder = async (
         WHERE id IN (?)
       `,
       [cartIds]
+    );
+
+    const [order] = await queryRunner.query(
+      `SELECT 
+        o.id,
+        o.order_number,
+        o.address,
+        o.subscribe_delivery_time,
+        o.user_id,
+        os.status,
+        (
+          SELECT
+            JSON_ARRAYAGG(
+              JSON_OBJECT(
+                  "id", oi.id,
+                  "quantity", oi.quantity,
+                  "bookId", oi.book_id
+              )
+            )
+          FROM order_items oi
+          WHERE oi.order_id = ?
+        ) AS orderItems
+      FROM orders o
+      JOIN order_status os ON o.order_status_id = os.id
+      WHERE o.id = ?
+        `,
+      [result.insertId, result.insertId]
     );
 
     await queryRunner.commitTransaction();
@@ -139,7 +153,7 @@ const getOrder = async (orderNumber) => {
 
 module.exports = {
   getOrderStatusId,
-  completeOrder,
+  completeOrders,
   getOrder,
   getOrderStatusId,
 };

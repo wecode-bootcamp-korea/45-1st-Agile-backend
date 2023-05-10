@@ -76,6 +76,7 @@ const getCartsById = async (cartIds) => {
       `,
       [cartIds]
     );
+
     return carts;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');

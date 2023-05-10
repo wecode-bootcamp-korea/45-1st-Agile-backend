@@ -6,14 +6,16 @@ const { v4: uuidv4 } = require('uuid');
 const completeOrders = async (
   address,
   user,
-  SubscribeDeliveryTime,
+  subscribeDeliveryTime,
   cartIds
 ) => {
   try {
     let totalPrice = 0;
     const orderNumber = uuidv4();
+    console.log(cartIds);
     const carts = await cartDao.getCartsById(cartIds);
-
+    console.log(carts);
+    console.log('---------1----------');
     carts.forEach((cart) => {
       totalPrice += totalPrice + cart.amount * cart.price;
     });
@@ -26,13 +28,13 @@ const completeOrders = async (
 
     const pointReward = totalPrice > 70000 ? totalPrice * 0.02 : 0;
     const netPoint = user.points - totalPrice + pointReward;
-
-    const order = await orderDao.completeOrder(
+    console.log('---------2----------');
+    const order = await orderDao.completeOrders(
       user.id,
       orderNumber,
       address,
       netPoint,
-      SubscribeDeliveryTime,
+      subscribeDeliveryTime,
       carts
     );
 
@@ -48,12 +50,7 @@ const getOrder = async (orderNumber) => {
   return await orderDao.getOrder(orderNumber);
 };
 
-const createOrderItems = async (quantity, bookId, orderId) => {
-  return await orderDao.createOrderItems(quantity, bookId, orderId);
-};
-
 module.exports = {
   completeOrders,
   getOrder,
-  createOrderItems,
 };
