@@ -64,7 +64,7 @@ const getBookById = async (bookId, userId) => {
 
   const getLike = await likeDao.checkLike(userId, bookId);
 
-  book.isLike = getLike;
+  book.isLiked = getLike;
 
   return book;
 };
