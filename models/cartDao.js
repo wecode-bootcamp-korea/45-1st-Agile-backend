@@ -64,6 +64,7 @@ const getCarts = async (userId) => {
     return dataSource.query(
       `SELECT DISTINCT
         b.id bookId,
+        c.id cartId,
         b.title,
         b.thumbnail,
         b.price,
