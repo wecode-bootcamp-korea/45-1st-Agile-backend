@@ -1,22 +1,10 @@
 const { dataSource } = require('./dataSource');
 
-const getOrderStatusId = async (orderStatus) => {
-  try {
-    const [orderStatusId] = await dataSource.query(
-      `
-          SELECT id
-              FROM order_status
-              WHERE status = ?
-          `,
-      [orderStatus]
-    );
-    return orderStatusId;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
-};
+const orderStatusEnum = Object.freeze({
+  PENDING: 1,
+  SHIPPING: 2,
+  COMPLETE: 3,
+});
 
 const completeOrders = async (
   userId,
@@ -31,7 +19,7 @@ const completeOrders = async (
   await queryRunner.connect();
   await queryRunner.startTransaction();
 
-  const orderStatusId = await getOrderStatusId('배송준비중');
+  const orderStatusId = orderStatusEnum.PENDING;
 
   try {
     // - create order
@@ -47,11 +35,11 @@ const completeOrders = async (
             ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId.id]
+      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId]
     );
 
     // create order items
-    const updates = carts.map((cart) => [
+    const orderItems = carts.map((cart) => [
       cart.amount,
       cart.bookId,
       result.insertId,
@@ -64,7 +52,7 @@ const completeOrders = async (
         order_id 
       ) VALUES ?
       `,
-      [updates]
+      [orderItems]
     );
 
     // update user point
@@ -96,23 +84,19 @@ const completeOrders = async (
         o.subscribe_delivery_time,
         o.user_id,
         os.status,
-        (
-          SELECT
             JSON_ARRAYAGG(
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
                   "bookId", oi.book_id
               )
-            )
-          FROM order_items oi
-          WHERE oi.order_id = ?
-        ) AS orderItems
+            ) orderItems
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
+      JOIN order_items oi ON oi.order_id = o.id
       WHERE o.id = ?
         `,
-      [result.insertId, result.insertId]
+      [result.insertId]
     );
 
     await queryRunner.commitTransaction();
@@ -150,8 +134,6 @@ const getOrder = async (orderNumber) => {
 };
 
 module.exports = {
-  getOrderStatusId,
   completeOrders,
   getOrder,
-  getOrderStatusId,
 };
