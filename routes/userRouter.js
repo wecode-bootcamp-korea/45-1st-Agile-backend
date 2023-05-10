@@ -11,7 +11,7 @@ router.get('', validateToken, userController.getUserInfo);
 router.patch('/password', validateToken, userController.modifyPassword);
 router.patch('/information', validateToken, userController.modifyInformation);
 router.post('/auth-check', validateToken, userController.authCheck);
-router.get('/order', validateToken, userController.getOrderStatus);
+router.get('/orders', validateToken, userController.getOrderStatus);
 
 module.exports = {
   router,
