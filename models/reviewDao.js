@@ -1,5 +1,30 @@
 const { dataSource } = require('./dataSource');
 
+const createReview = async (userId, bookId, content, score) => {
+  try {
+    const result = await dataSource.query(
+      `INSERT INTO reviews (
+        user_id,
+        book_id,
+        content,
+        score
+        )
+      VALUES(
+        ?,
+        ?,
+        ?,
+        ?
+        )`,
+      [userId, bookId, content, score]
+    );
+    return result;
+  } catch (err) {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getReviewsByBookId = async (bookId, limit, offset) => {
   try {
     return await dataSource.query(
@@ -111,6 +136,7 @@ const deleteReview = async (userId, reviewId) => {
 };
 
 module.exports = {
+  createReview,
   getReviewsByBookId,
   getReviewsCountByBookId,
   isExistedReview,
