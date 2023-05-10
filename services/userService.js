@@ -67,6 +67,9 @@ const getUserById = async (id) => {
   return userDao.getUserById(id);
 };
 
+const updateUserPoints = async (userId, points) => {
+  return userDao.updateUserPoints(userId, points);
+};
 const modifyPassword = async (userId, password) => {
   pwValidationCheck(password);
 
@@ -90,6 +93,7 @@ module.exports = {
   login,
   isExistedUser,
   getUserById,
+  updateUserPoints,
   modifyPassword,
   modifyInformation,
   authCheck,
