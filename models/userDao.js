@@ -110,6 +110,23 @@ const getUserById = async (id) => {
   }
 };
 
+const updateUserPoints = async (userId, points) => {
+  try {
+    return await dataSource.query(
+      `
+      UPDATE users
+        SET points = ?
+        WHERE id = ? 
+        `,
+      [points, userId]
+    );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const modifyPassword = async (userId, hashedPassword) => {
   try {
     const result = await dataSource.query(
@@ -163,6 +180,7 @@ module.exports = {
   getUserByEmail,
   isExistedUser,
   getUserById,
+  updateUserPoints,
   modifyPassword,
   modifyInformation,
 };
