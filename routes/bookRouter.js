@@ -11,6 +11,11 @@ router.get('/:bookId', bookController.getBookById);
 router.post('/:bookId/reviews', validateToken, reviewController.createReview);
 router.get('/:bookId/reviews', reviewController.getReviewsByBookId);
 router.patch('/review/:reviewId', validateToken, reviewController.modifyReview);
+router.delete(
+  '/review/:reviewId',
+  validateToken,
+  reviewController.deleteReview
+);
 
 module.exports = {
   router,

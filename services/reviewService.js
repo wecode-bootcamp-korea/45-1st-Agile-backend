@@ -16,8 +16,11 @@ const isExistedReview = (bookId) => {
 };
 
 const modifyReview = async (userId, reviewId, content, score) => {
-  const review = reviewDao.modifyReview(userId, reviewId, content, score);
-  return review;
+  return reviewDao.modifyReview(userId, reviewId, content, score);
+};
+
+const deleteReview = async (userId, reviewId) => {
+  return reviewDao.deleteReview(userId, reviewId);
 };
 
 module.exports = {
@@ -25,4 +28,5 @@ module.exports = {
   getReviewsByBookId,
   isExistedReview,
   modifyReview,
+  deleteReview,
 };

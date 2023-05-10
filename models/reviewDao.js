@@ -116,10 +116,30 @@ const modifyReview = async (userId, reviewId, content, score) => {
   }
 };
 
+const deleteReview = async (userId, reviewId) => {
+  try {
+    const result = await dataSource.query(
+      `DELETE
+      FROM reviews
+      WHERE user_id = ? AND id = ?`,
+      [userId, reviewId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    return result;
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createReview,
   getReviewsByBookId,
   getReviewsCountByBookId,
   isExistedReview,
   modifyReview,
+  deleteReview,
 };
