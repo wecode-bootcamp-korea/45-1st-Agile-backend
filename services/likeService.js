@@ -23,6 +23,17 @@ const createDeleteLike = async (userId, bookId) => {
   return createOrDelete;
 };
 
+const getLikes = async (userId) => {
+  const likeList = await likeDao.getLikes(userId);
+  return likeList;
+};
+
+const deleteLikes = async (userId, likeId) => {
+  return likeDao.deleteLikes(userId, likeId);
+};
+
 module.exports = {
   createDeleteLike,
+  getLikes,
+  deleteLikes,
 };

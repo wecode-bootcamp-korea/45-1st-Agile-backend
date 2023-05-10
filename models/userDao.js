@@ -44,17 +44,16 @@ const getUserByEmail = async (email) => {
         email,
         password,
         name,
-        phone_number,
+        phone_number phoneNumber,
         address,
         gender,
-        birth_date,
+        birth_date birthDate,
         points
       FROM users
       WHERE email = ? 
         `,
       [email]
     );
-
     return user;
   } catch (error) {
     error = new Error('DATABASE_CONNECTION_ERROR');
@@ -93,10 +92,10 @@ const getUserById = async (id) => {
         email,
         password,
         name,
-        phone_number,
+        phone_number phoneNumber,
         address,
         gender,
-        birth_date,
+        birth_date birthDate,
         points
         FROM users
         WHERE id = ? 
@@ -111,9 +110,59 @@ const getUserById = async (id) => {
   }
 };
 
+const modifyPassword = async (userId, hashedPassword) => {
+  try {
+    const result = await dataSource.query(
+      `UPDATE users
+        SET password = ?
+      WHERE id = ?
+      `,
+      [hashedPassword, userId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+    return result;
+  } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const modifyInformation = async (userId, phoneNumber, address) => {
+  try {
+    const result = await dataSource.query(
+      `UPDATE users
+        SET phone_number = ?,
+        address = ?
+      WHERE id = ?
+      `,
+      [phoneNumber, address, userId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    const [user] = await dataSource.query(
+      `SELECT
+        phone_number phoneNumber,
+        address
+      FROM users
+      WHERE id = ?`,
+      [userId]
+    );
+    return user;
+  } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
   isExistedUser,
   getUserById,
+  modifyPassword,
+  modifyInformation,
 };

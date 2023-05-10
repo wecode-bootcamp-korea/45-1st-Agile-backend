@@ -57,6 +57,28 @@ const login = catchAsync(async (req, res) => {
   return res.status(200).json({ accessToken });
 });
 
+const modifyPassword = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { password } = req.body;
+  const result = await userService.modifyPassword(userId, password);
+
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+  return res.status(200).json({ message: 'MODIFY SUCCESS' });
+});
+
+const modifyInformation = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { phoneNumber, address } = req.body;
+  const result = await userService.modifyInformation(
+    userId,
+    phoneNumber,
+    address
+  );
+
+  if (!result) return res.status(400).json({ message: 'MODIFY FAIL' });
+  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
+});
+
 const getUserInfo = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
@@ -71,8 +93,24 @@ const getUserInfo = catchAsync(async (req, res) => {
   return res.status(200).json({ user });
 });
 
+const authCheck = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { password } = req.body;
+
+  const checkPassword = await userService.authCheck(userId, password);
+
+  if (!checkPassword) {
+    return res.status(400).json({ message: 'AUTH FAIL' });
+  }
+
+  return res.status(200).json({ message: 'AUTH SUCCESS' });
+});
+
 module.exports = {
   signUp,
   login,
+  modifyPassword,
+  modifyInformation,
   getUserInfo,
+  authCheck,
 };
