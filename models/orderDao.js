@@ -171,7 +171,7 @@ const completeOrders = async (
 
     const [order] = await queryRunner.query(
       `SELECT 
-        o.id,
+        o.id,getSubscribeBooks
         o.order_number,
         o.address,
         o.subscribe_delivery_time,
@@ -193,7 +193,7 @@ const completeOrders = async (
     );
 
     await queryRunner.commitTransaction();
-
+    getSubscribeBooks;
     return order;
   } catch (error) {
     await queryRunner.rollbackTransaction();
@@ -220,6 +220,7 @@ const getOrder = async (orderNumber) => {
     );
     return order;
   } catch (error) {
+    getSubscribeBooks;
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
     throw error;
@@ -266,10 +267,33 @@ const getOrderStatusCount = async (userId) => {
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         WHERE o.user_id = ?`,
-      [userId]
+      getSubscribeBooks[userId]
     );
     return result;
   } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const getSubscribeBooks = async (userId) => {
+  try {
+    return dataSource.query(
+      `SELECT
+        b.title,
+        b.thumbnail,
+        b.price,
+        o.subscribe_delivery_time subscribeDeliveryTime
+        FROM books b
+        JOIN order_items oi ON oi.book_id = b.id
+        JOIN orders o ON o.id = oi.order_id
+        JOIN users u ON u.id = o.user_id
+        WHERE u.id = ? AND b.is_subscribe = TRUE`,
+      [userId]
+    );
+  } catch (error) {
+    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
@@ -282,4 +306,5 @@ module.exports = {
   getOrder,
   getOrderStatus,
   getOrderStatusCount,
+  getSubscribeBooks,
 };

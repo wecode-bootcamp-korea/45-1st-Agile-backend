@@ -41,8 +41,18 @@ const getOrderStatus = catchAsync(async (req, res) => {
   });
 });
 
+const getSubscribeBooks = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const result = await orderService.getSubscribeBooks(userId);
+
+  return res
+    .status(200)
+    .json({ message: 'SEBSCRIBE BOOKS GET SUCCESS', result });
+});
+
 module.exports = {
   completeOrder,
   completeOrders,
   getOrderStatus,
+  getSubscribeBooks,
 };
