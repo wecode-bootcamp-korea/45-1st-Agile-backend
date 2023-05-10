@@ -79,7 +79,8 @@ const getLikes = async (userId) => {
         b.id bookId,
         b.title,
         b.thumbnail,
-        b.price
+        b.price,
+        b.is_subscribe isSubscribe
       FROM likes l
       JOIN books b ON l.book_id = b.id
       WHERE l.user_id = ?`,
