@@ -61,18 +61,19 @@ const getBookById = async (bookId) => {
   try {
     const [book] = await dataSource.query(
       `
-            SELECT 
-                title, 
-                subtitle, 
-                author,
-                issue_date issueDate,
-                description,
-                thumbnail, 
-                price, 
-                is_subscribe isSubscribe
-            FROM books
-            WHERE books.id = ?
-            `,
+      SELECT 
+        title, 
+        subtitle, 
+        author,
+        issue_date issueDate,
+        description,
+        thumbnail, 
+        price,
+        quantity,
+        is_subscribe isSubscribe
+      FROM books
+      WHERE books.id = ?
+      `,
       [bookId]
     );
 
@@ -135,7 +136,6 @@ const getBookCount = async (categoryId, subCategoryId) => {
     );
     return result;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;
