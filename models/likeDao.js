@@ -75,7 +75,8 @@ const getLikes = async (userId) => {
   try {
     return dataSource.query(
       `SELECT
-        b.id,
+        l.id,
+        b.id bookId,
         b.title,
         b.thumbnail,
         b.price
