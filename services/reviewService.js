@@ -27,6 +27,6 @@ module.exports = {
   createReview,
   getReviewsByBookId,
   isExistedReview,
-  deleteReview,
   modifyReview,
+  deleteReview,
 };
