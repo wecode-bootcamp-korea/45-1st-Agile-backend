@@ -106,12 +106,6 @@ const authCheck = catchAsync(async (req, res) => {
   return res.status(200).json({ message: 'AUTH SUCCESS' });
 });
 
-const getOrderStatus = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const result = await userService.getOrderStatus(userId);
-  return res.status(200).json({ message: 'ORDER GET SUCCESS', data: result });
-});
-
 module.exports = {
   signUp,
   login,
@@ -119,5 +113,4 @@ module.exports = {
   modifyInformation,
   getUserInfo,
   authCheck,
-  getOrderStatus,
 };
