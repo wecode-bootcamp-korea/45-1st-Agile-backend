@@ -8,17 +8,14 @@ const router = express.Router();
 router.post('', bookController.createBookList);
 router.get('', bookController.getBookList);
 router.get('/:bookId', bookController.getBookById);
-<<<<<<< HEAD
+router.post('/:bookId/reviews', validateToken, reviewController.createReview);
+router.get('/:bookId/reviews', reviewController.getReviewsByBookId);
+router.patch('/review/:reviewId', validateToken, reviewController.modifyReview);
 router.delete(
   '/review/:reviewId',
   validateToken,
   reviewController.deleteReview
 );
-=======
-router.post('/:bookId/reviews', validateToken, reviewController.createReview);
->>>>>>> main
-router.get('/:bookId/reviews', reviewController.getReviewsByBookId);
-router.patch('/review/:reviewId', validateToken, reviewController.modifyReview);
 
 module.exports = {
   router,
