@@ -158,6 +158,24 @@ const modifyInformation = async (userId, phoneNumber, address) => {
   }
 };
 
+const getOrderStatus = async (userId) => {
+  try {
+    return dataSource.query(
+      `SELECT
+        o.order_number,
+        os.status
+        FROM order_status os
+        JOIN orders o ON o.order_status_id = os.id
+        WHERE o.user_id = ?`,
+      userId
+    );
+  } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -165,4 +183,5 @@ module.exports = {
   getUserById,
   modifyPassword,
   modifyInformation,
+  getOrderStatus,
 };

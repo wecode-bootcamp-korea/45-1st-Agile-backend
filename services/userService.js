@@ -85,6 +85,10 @@ const authCheck = async (userId, password) => {
   return bcrypt.compare(password, user.password);
 };
 
+const getOrderStatus = async (userId) => {
+  return userDao.getOrderStatus(userId);
+};
+
 module.exports = {
   signUp,
   login,
@@ -93,4 +97,5 @@ module.exports = {
   modifyPassword,
   modifyInformation,
   authCheck,
+  getOrderStatus,
 };
