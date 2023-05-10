@@ -1,7 +1,6 @@
 const { dataSource } = require('./dataSource');
 
 const createReview = async (userId, bookId, content, score) => {
-  console.log(userId, bookId, content, score);
   try {
     const result = await dataSource.query(
       `INSERT INTO reviews (
@@ -89,7 +88,6 @@ const isExistedReview = async (bookId) => {
 };
 
 const modifyReview = async (userId, reviewId, content, score) => {
-  console.log(userId, reviewId, content, score);
   try {
     const result = await dataSource.query(
       `UPDATE reviews
@@ -112,7 +110,6 @@ const modifyReview = async (userId, reviewId, content, score) => {
     );
     return review;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;

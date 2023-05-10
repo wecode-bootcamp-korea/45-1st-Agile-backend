@@ -34,6 +34,12 @@ const modifyReview = catchAsync(async (req, res) => {
   const { reviewId } = req.params;
   const { content, score } = req.body;
 
+  if (!content || !score) {
+    const error = new Error('CHECK DATA');
+    error.status(400);
+    throw error;
+  }
+
   const result = await reviewService.modifyReview(
     userId,
     reviewId,
