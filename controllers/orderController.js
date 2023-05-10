@@ -16,6 +16,21 @@ const completeOrder = catchAsync(async (req, res) => {
   return res.status(201).json({ message: 'CREATE SUCCESS', data: order });
 });
 
+const completeOrders = catchAsync(async (req, res) => {
+  const user = req.user;
+  const { address, subscribeDeliveryTime, cartIds } = req.body;
+
+  const order = await orderService.completeOrders(
+    address,
+    user,
+    subscribeDeliveryTime,
+    cartIds
+  );
+
+  return res.status(201).json({ message: 'CREATE SUCCESS', data: order });
+});
+
 module.exports = {
   completeOrder,
+  completeOrders,
 };

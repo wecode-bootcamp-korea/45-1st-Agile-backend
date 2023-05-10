@@ -72,7 +72,7 @@ const getBookById = async (bookId) => {
         quantity,
         is_subscribe isSubscribe
       FROM books
-      WHERE books.id = ?
+      WHERE books.id IN (?)
       `,
       [bookId]
     );
@@ -174,6 +174,25 @@ const getLimit = (limit, offset) => {
   return `LIMIT ${limit} OFFSET ${offset}`;
 };
 
+const getBooksPrice = async (bookIds) => {
+  try {
+    const result = await dataSource.query(
+      `
+        SELECT books.price
+        FROM books
+        WHERE books.id IN (?)
+    `,
+      [bookIds]
+    );
+
+    return result;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const isExistedBook = async (bookId) => {
   try {
     const [result] = await dataSource.query(
@@ -195,10 +214,29 @@ const isExistedBook = async (bookId) => {
   }
 };
 
+const modifyBookQuantity = async (bookId, quantity) => {
+  try {
+    return await dataSource.query(
+      `
+      UPDATE books
+        SET quantity = quantity - ?
+        WHERE id = ? 
+        `,
+      [quantity, bookId]
+    );
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createBookList,
   getBookById,
   getBookList,
   getBookCount,
   isExistedBook,
+  modifyBookQuantity,
+  getBooksPrice,
 };
