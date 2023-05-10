@@ -261,16 +261,17 @@ const getOrderStatusCount = async (userId) => {
   try {
     const [result] = await dataSource.query(
       `SELECT
-        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PreparingForDelivery,
-        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) Shipping,
-        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) DeliveryCompleted
+        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PENDING,
+        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) SHIPPING,
+        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) COMPLETE
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         WHERE o.user_id = ?`,
-      getSubscribeBooks[userId]
+      [userId]
     );
     return result;
   } catch (error) {
+    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
@@ -293,7 +294,6 @@ const getSubscribeBooks = async (userId) => {
       [userId]
     );
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
