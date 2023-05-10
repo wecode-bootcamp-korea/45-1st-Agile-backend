@@ -270,7 +270,6 @@ const getOrderStatusCount = async (userId) => {
     );
     return result;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
