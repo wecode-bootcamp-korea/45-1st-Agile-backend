@@ -165,7 +165,7 @@ const getOrderStatus = async (userId) => {
 
 const getOrderStatusCount = async (userId) => {
   try {
-    return dataSource.query(
+    const [result] = dataSource.query(
       `SELECT
         COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PreparingForDelivery,
         COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) Shipping,
@@ -175,6 +175,7 @@ const getOrderStatusCount = async (userId) => {
         WHERE o.user_id = ?`,
       [userId]
     );
+    return result;
   } catch (error) {
     error = new Error('INVALID DATA');
     error.statusCode = 400;
