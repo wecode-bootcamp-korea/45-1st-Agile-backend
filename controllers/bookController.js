@@ -54,6 +54,7 @@ const getBookList = catchAsync(async (req, res) => {
 
 const getBookById = catchAsync(async (req, res) => {
   const { bookId } = req.params;
+  const userId = req.userId;
 
   if (!bookId) {
     const error = new Error('KEY_ERROR');
@@ -61,29 +62,13 @@ const getBookById = catchAsync(async (req, res) => {
     throw error;
   }
 
-  const book = await bookService.getBookById(bookId);
+  const book = await bookService.getBookById(bookId, userId);
 
-  return res.status(200).json({ book });
-});
-
-const modifyReview = catchAsync(async (req, res) => {
-  const userId = req.user.id;
-  const { reviewId } = req.params;
-  const { content, score } = req.body;
-
-  const result = await bookService.modifyReview(
-    userId,
-    reviewId,
-    content,
-    score
-  );
-
-  return res.status(200).json({ message: 'MODIFY SUCCESS', data: result });
+  return res.status(200).json(book);
 });
 
 module.exports = {
   createBookList,
   getBookList,
   getBookById,
-  modifyReview,
 };

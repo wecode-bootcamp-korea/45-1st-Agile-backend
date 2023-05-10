@@ -32,7 +32,7 @@ const completeOrders = async (
   await queryRunner.startTransaction();
 
   const orderStatusId = await getOrderStatusId('배송준비중');
-  console.log('---------3----------');
+
   try {
     // - create order
     const result = await queryRunner.query(
@@ -50,15 +50,13 @@ const completeOrders = async (
       [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId.id]
     );
 
-    console.log('---------4----------');
-    console.log(carts);
     // create order items
     const updates = carts.map((cart) => [
       cart.amount,
       cart.bookId,
       result.insertId,
     ]);
-    console.log(updates);
+
     await queryRunner.query(
       `INSERT INTO order_items (
         quantity,
@@ -68,7 +66,7 @@ const completeOrders = async (
       `,
       [updates]
     );
-    console.log('---------5----------');
+
     // update user point
     await queryRunner.query(
       `
@@ -78,7 +76,7 @@ const completeOrders = async (
         `,
       [netPoint, userId]
     );
-    console.log('---------6----------');
+
     // delete cart
     const cartIds = carts.map((cart) => cart.id);
 

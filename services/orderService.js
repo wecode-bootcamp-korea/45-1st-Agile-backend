@@ -12,10 +12,9 @@ const completeOrders = async (
   try {
     let totalPrice = 0;
     const orderNumber = uuidv4();
-    console.log(cartIds);
+
     const carts = await cartDao.getCartsById(cartIds);
-    console.log(carts);
-    console.log('---------1----------');
+
     carts.forEach((cart) => {
       totalPrice += totalPrice + cart.amount * cart.price;
     });
@@ -28,7 +27,7 @@ const completeOrders = async (
 
     const pointReward = totalPrice > 70000 ? totalPrice * 0.02 : 0;
     const netPoint = user.points - totalPrice + pointReward;
-    console.log('---------2----------');
+
     const order = await orderDao.completeOrders(
       user.id,
       orderNumber,

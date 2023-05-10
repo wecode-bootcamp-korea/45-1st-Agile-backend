@@ -83,6 +83,11 @@ const modifyInformation = async (userId, phoneNumber, address) => {
   return userDao.modifyInformation(userId, phoneNumber, address);
 };
 
+const authCheck = async (userId, password) => {
+  const user = await userDao.getUserById(userId);
+  return bcrypt.compare(password, user.password);
+};
+
 module.exports = {
   signUp,
   login,
@@ -91,4 +96,5 @@ module.exports = {
   updateUserPoints,
   modifyPassword,
   modifyInformation,
+  authCheck,
 };

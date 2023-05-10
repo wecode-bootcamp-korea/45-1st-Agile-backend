@@ -44,10 +44,10 @@ const getUserByEmail = async (email) => {
         email,
         password,
         name,
-        phone_number,
+        phone_number phoneNumber,
         address,
         gender,
-        birth_date,
+        birth_date birthDate,
         points
       FROM users
       WHERE email = ? 
@@ -92,10 +92,10 @@ const getUserById = async (id) => {
         email,
         password,
         name,
-        phone_number,
+        phone_number phoneNumber,
         address,
         gender,
-        birth_date,
+        birth_date birthDate,
         points
         FROM users
         WHERE id = ? 

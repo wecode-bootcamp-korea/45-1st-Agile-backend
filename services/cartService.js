@@ -35,10 +35,15 @@ const deleteBooks = async (userId, cartId) => {
   return await cartDao.deleteBooks(userId, cartId);
 };
 
+const addExistBook = async (userId, bookId, amount) => {
+  return await cartDao.addExistBook(userId, bookId, amount);
+};
+
 module.exports = {
   createCart,
   checkCart,
   getCarts,
   modifyQuantity,
   deleteBooks,
+  addExistBook,
 };

@@ -90,6 +90,7 @@ const getCarts = async (userId) => {
     return dataSource.query(
       `SELECT DISTINCT
         b.id bookId,
+        c.id cartId,
         b.title,
         b.thumbnail,
         b.price,
@@ -162,6 +163,34 @@ const deleteBooks = async (userId, cartId) => {
   }
 };
 
+const addExistBook = async (userId, bookId, amount) => {
+  try {
+    const result = await dataSource.query(
+      `UPDATE carts
+        SET amount = amount + ?
+        WHERE user_id = ? AND book_id = ?`,
+      [amount, userId, bookId]
+    );
+
+    if (!result.affectedRows) return result.affectedRows;
+
+    const [cart] = await dataSource.query(
+      `SELECT 
+        id,
+        amount
+      FROM carts
+      WHERE user_id = ? AND book_id = ?`,
+      [userId, bookId]
+    );
+
+    return cart;
+  } catch (error) {
+    error = new Error('INVALID_DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createCart,
   checkCart,
@@ -169,4 +198,5 @@ module.exports = {
   getCarts,
   modifyQuantity,
   deleteBooks,
+  addExistBook,
 };

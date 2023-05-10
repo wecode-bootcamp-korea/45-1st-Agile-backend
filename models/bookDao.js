@@ -57,6 +57,34 @@ const createBookList = async (
   }
 };
 
+const getBookById = async (bookId) => {
+  try {
+    const [book] = await dataSource.query(
+      `
+      SELECT 
+        title, 
+        subtitle, 
+        author,
+        issue_date issueDate,
+        description,
+        thumbnail, 
+        price,
+        quantity,
+        is_subscribe isSubscribe
+      FROM books
+      WHERE books.id IN (?)
+      `,
+      [bookId]
+    );
+
+    return book;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getBookList = async (
   categoryId,
   subCategoryId,
@@ -108,7 +136,6 @@ const getBookCount = async (categoryId, subCategoryId) => {
     );
     return result;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA');
     error.statusCode = 400;
     throw error;
@@ -145,34 +172,6 @@ const getOrdering = (orderBy) => {
 
 const getLimit = (limit, offset) => {
   return `LIMIT ${limit} OFFSET ${offset}`;
-};
-
-const getBookById = async (bookId) => {
-  try {
-    const book = await dataSource.query(
-      `
-              SELECT 
-                  title, 
-                  subtitle, 
-                  author,
-                  issue_date,
-                  description,
-                  thumbnail, 
-                  price, 
-                  quantity,
-                  is_subscribe
-              FROM books
-              WHERE books.id in (?)
-              `,
-      [bookId]
-    );
-
-    return book;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
 };
 
 const getBooksPrice = async (bookIds) => {
