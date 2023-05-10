@@ -1,5 +1,30 @@
 const { dataSource } = require('./dataSource');
 
+const createReview = async (userId, bookId, content, score) => {
+  try {
+    const result = await dataSource.query(
+      `INSERT INTO reviews (
+        user_id,
+        book_id,
+        content,
+        score
+        )
+      VALUES(
+        ?,
+        ?,
+        ?,
+        ?
+        )`,
+      [userId, bookId, content, score]
+    );
+    return result;
+  } catch (err) {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getReviewsByBookId = async (bookId, limit, offset) => {
   try {
     return await dataSource.query(
@@ -63,7 +88,6 @@ const isExistedReview = async (bookId) => {
 };
 
 const modifyReview = async (userId, reviewId, content, score) => {
-  console.log(userId, reviewId, content, score);
   try {
     const result = await dataSource.query(
       `UPDATE reviews
@@ -86,7 +110,6 @@ const modifyReview = async (userId, reviewId, content, score) => {
     );
     return review;
   } catch (error) {
-    console.log(error.message);
     error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 400;
     throw error;
@@ -94,6 +117,7 @@ const modifyReview = async (userId, reviewId, content, score) => {
 };
 
 module.exports = {
+  createReview,
   getReviewsByBookId,
   getReviewsCountByBookId,
   isExistedReview,
