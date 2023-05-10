@@ -93,10 +93,24 @@ const getUserInfo = catchAsync(async (req, res) => {
   return res.status(200).json({ user });
 });
 
+const authCheck = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { password } = req.body;
+
+  const checkPassword = await userService.authCheck(userId, password);
+
+  if (!checkPassword) {
+    return res.status(400).json({ message: 'AUTH FAIL' });
+  }
+
+  return res.status(200).json({ message: 'AUTH SUCCESS' });
+});
+
 module.exports = {
   signUp,
   login,
   modifyPassword,
   modifyInformation,
   getUserInfo,
+  authCheck,
 };
