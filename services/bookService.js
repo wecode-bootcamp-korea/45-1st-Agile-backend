@@ -1,4 +1,5 @@
 const bookDao = require('../models/bookDao');
+const likeDao = require('../models/likeDao');
 
 const createBookList = async (
   title,
@@ -52,7 +53,7 @@ const getBookCount = async (categoryId, subCategoryId) => {
   return booksCount;
 };
 
-const getBookById = async (bookId) => {
+const getBookById = async (bookId, userId) => {
   const book = await bookDao.getBookById(bookId);
 
   if (!book) {
@@ -60,6 +61,11 @@ const getBookById = async (bookId) => {
     error.statusCode = 404;
     throw error;
   }
+
+  const getLike = await likeDao.checkLike(userId, bookId);
+
+  book.isLiked = getLike;
+
   return book;
 };
 
