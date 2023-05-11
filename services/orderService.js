@@ -84,7 +84,6 @@ const completeOrders = async (
 
     return order;
   } catch (error) {
-    console.log(error);
     error = new Error(error.message);
     error.statusCode = 400;
     throw error;

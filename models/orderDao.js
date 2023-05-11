@@ -223,7 +223,6 @@ const completeOrders = async (
     getSubscribeBooks;
     return order;
   } catch (error) {
-    console.log(error.message);
     await queryRunner.rollbackTransaction();
 
     error = new Error('DATABASE_CONNECTION_ERROR');
@@ -306,7 +305,6 @@ const getOrderStatusCount = async (userId) => {
     );
     return result;
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
