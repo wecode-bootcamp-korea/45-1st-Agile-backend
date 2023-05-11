@@ -98,10 +98,15 @@ const getOrderStatusCount = async (userId) => {
   return orderDao.getOrderStatusCount(userId);
 };
 
+const getSubscribeBooks = async (userId) => {
+  return orderDao.getSubscribeBooks(userId);
+};
+
 module.exports = {
   completeOrder,
   completeOrders,
   getOrder,
   getOrderStatus,
   getOrderStatusCount,
+  getSubscribeBooks,
 };
