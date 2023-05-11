@@ -211,7 +211,7 @@ const completeOrders = async (
     );
 
     await queryRunner.commitTransaction();
-
+    getSubscribeBooks;
     return order;
   } catch (error) {
     await queryRunner.rollbackTransaction();
@@ -260,15 +260,38 @@ const getOrderStatusCount = async (userId) => {
   try {
     const [result] = await dataSource.query(
       `SELECT
-        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PreparingForDelivery,
-        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) Shipping,
-        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) DeliveryCompleted
+        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PENDING,
+        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) SHIPPING,
+        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) COMPLETE
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         WHERE o.user_id = ?`,
       [userId]
     );
     return result;
+  } catch (error) {
+    console.log(error);
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
+const getSubscribeBooks = async (userId) => {
+  try {
+    return dataSource.query(
+      `SELECT
+        b.title,
+        b.thumbnail,
+        b.price,
+        o.subscribe_delivery_time subscribeDeliveryTime
+        FROM books b
+        JOIN order_items oi ON oi.book_id = b.id
+        JOIN orders o ON o.id = oi.order_id
+        JOIN users u ON u.id = o.user_id
+        WHERE u.id = ? AND b.is_subscribe = TRUE`,
+      [userId]
+    );
   } catch (error) {
     error = new Error('INVALID DATA');
     error.statusCode = 400;
@@ -282,4 +305,5 @@ module.exports = {
   getOrder,
   getOrderStatus,
   getOrderStatusCount,
+  getSubscribeBooks,
 };
