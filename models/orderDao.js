@@ -220,7 +220,7 @@ const completeOrders = async (
     );
 
     await queryRunner.commitTransaction();
-
+    getSubscribeBooks;
     return order;
   } catch (error) {
     console.log(error.message);
@@ -255,6 +255,7 @@ const getOrder = async (orderNumber) => {
     );
     return order;
   } catch (error) {
+    getSubscribeBooks;
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
     throw error;
@@ -306,6 +307,7 @@ const getOrderStatusCount = async (userId) => {
     );
     return result;
   } catch (error) {
+    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
