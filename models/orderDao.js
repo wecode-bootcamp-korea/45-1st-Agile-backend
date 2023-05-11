@@ -342,4 +342,5 @@ module.exports = {
   getOrderStatus,
   getOrderStatusCount,
   getSubscribeBooks,
+  subscribeCycleEnum,
 };

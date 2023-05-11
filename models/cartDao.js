@@ -1,10 +1,5 @@
+const { subscribeCycleEnum } = require('../models/orderDao');
 const { dataSource } = require('./dataSource');
-
-const subscribeCycleEnum = Object.freeze({
-  ONEWEEK: 1,
-  ONEMONTH: 2,
-  THREEMONTHS: 3,
-});
 
 const createCart = async (
   userId,
