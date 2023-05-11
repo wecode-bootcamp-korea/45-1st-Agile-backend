@@ -81,7 +81,7 @@ const completeOrder = async (
         o.order_number orderNumber,
         o.address,
         o.subscribe_delivery_time subscribeDeliveryTime,
-        o.user_id,
+        o.user_id userId,
         o.subscribe_cycle_id subscribeCycleId,
         os.status,
             JSON_ARRAYAGG(
@@ -255,7 +255,6 @@ const getOrder = async (orderNumber) => {
     );
     return order;
   } catch (error) {
-    getSubscribeBooks;
     error = new Error('DATABASE_CONNECTION_ERROR');
     error.statusCode = 400;
     throw error;
