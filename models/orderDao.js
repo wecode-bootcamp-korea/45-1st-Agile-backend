@@ -78,7 +78,7 @@ const completeOrder = async (
     const [order] = await queryRunner.query(
       `SELECT 
         o.id,
-        o.order_number,
+        o.order_number orderNumber,
         o.address,
         o.subscribe_delivery_time subscribeDeliveryTime,
         o.user_id,
@@ -240,9 +240,16 @@ const getOrder = async (orderNumber) => {
   try {
     const [order] = await dataSource.query(
       `
-        SELECT id, order_number, address, subscribe_delivery_time, subscribe_cycle_id, user_id, order_status_id
-            FROM orders
-            WHERE order_number = ?
+        SELECT
+          id,
+          order_number orderNumber, 
+          address, 
+          subscribe_delivery_time subscribeDeliveryTime, 
+          subscribe_cycle_id subscribeCycleId, 
+          user_id userId, 
+          order_status_id orderStatusId
+        FROM orders
+        WHERE order_number = ?
         `,
       [orderNumber]
     );
