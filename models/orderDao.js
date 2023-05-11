@@ -207,7 +207,7 @@ const completeOrders = async (
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
-                  "bookId", oi.book_id bookId
+                  "bookId", oi.book_id
               )
             ) orderItems,
       (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
