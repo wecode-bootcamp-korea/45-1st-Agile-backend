@@ -1,6 +1,18 @@
 const { dataSource } = require('./dataSource');
 
-const createCart = async (userId, bookId, amount, isSubscribe) => {
+const subscribeCycleEnum = Object.freeze({
+  ONEWEEK: 1,
+  ONEMONTH: 2,
+  THREEMONTHS: 3,
+});
+
+const createCart = async (
+  userId,
+  bookId,
+  amount,
+  isSubscribe,
+  subscribeCycle
+) => {
   try {
     const result = await dataSource.query(
       `
@@ -8,12 +20,13 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
             user_id,
             book_id,
             amount,
-            is_subscribe
+            is_subscribe,
+            subscribe_cycle_id
         ) VALUES (
-          ?, ?, ?, ?
+          ?, ?, ?, ?, ?
         )
       `,
-      [userId, bookId, amount, isSubscribe]
+      [userId, bookId, amount, isSubscribe, subscribeCycleEnum[subscribeCycle]]
     );
     const [cart] = await dataSource.query(
       `SELECT DISTINCT
@@ -22,12 +35,13 @@ const createCart = async (userId, bookId, amount, isSubscribe) => {
         b.thumbnail,
         b.price,
         b.is_subscribe isSubscribe,
+        (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = c.subscribe_cycle_id) subscribeCycle,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id
       WHERE c.id = ?
         `,
-      [result.insertedId]
+      [result.insertId]
     );
 
     return cart;
@@ -95,6 +109,7 @@ const getCarts = async (userId) => {
         b.thumbnail,
         b.price,
         b.is_subscribe isSubscribe,
+        (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = c.subscribe_cycle_id) subscribeCycle,
         c.amount
       FROM carts c
       JOIN books b ON b.id = c.book_id

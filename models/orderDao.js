@@ -6,13 +6,20 @@ const orderStatusEnum = Object.freeze({
   COMPLETE: 3,
 });
 
+const subscribeCycleEnum = Object.freeze({
+  ONEWEEK: 1,
+  ONEMONTH: 2,
+  THREEMONTHS: 3,
+});
+
 const completeOrder = async (
   userId,
   orderNumber,
   address,
   netPoint,
-  SubscribeDeliveryTime,
+  subscribeDeliveryTime,
   bookId,
+  subscribeCycle,
   quantity
 ) => {
   const queryRunner = dataSource.createQueryRunner();
@@ -31,12 +38,20 @@ const completeOrder = async (
               address,
               user_id,
               subscribe_delivery_time,
-              order_status_id
+              order_status_id,
+              subscribe_cycle_id
               ) VALUES (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId]
+      [
+        orderNumber,
+        address,
+        userId,
+        subscribeDeliveryTime,
+        orderStatusId,
+        subscribeCycleEnum[subscribeCycle],
+      ]
     );
 
     // create order items
@@ -65,8 +80,9 @@ const completeOrder = async (
         o.id,
         o.order_number,
         o.address,
-        o.subscribe_delivery_time,
+        o.subscribe_delivery_time subscribeDeliveryTime,
         o.user_id,
+        o.subscribe_cycle_id subscribeCycleId,
         os.status,
             JSON_ARRAYAGG(
               JSON_OBJECT(
@@ -74,7 +90,8 @@ const completeOrder = async (
                   "quantity", oi.quantity,
                   "bookId", oi.book_id
               )
-            ) orderItems
+            ) orderItems,
+      (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -104,8 +121,9 @@ const completeOrders = async (
   orderNumber,
   address,
   netPoint,
-  SubscribeDeliveryTime,
-  carts
+  subscribeDeliveryTime,
+  carts,
+  subscribeCycle
 ) => {
   const queryRunner = dataSource.createQueryRunner();
 
@@ -123,12 +141,20 @@ const completeOrders = async (
               address,
               user_id,
               subscribe_delivery_time,
+              subscribe_cycle_id,
               order_status_id
               ) VALUES (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId]
+      [
+        orderNumber,
+        address,
+        userId,
+        subscribeDeliveryTime,
+        subscribeCycleEnum[subscribeCycle],
+        orderStatusId,
+      ]
     );
 
     // create order items
@@ -172,18 +198,19 @@ const completeOrders = async (
     const [order] = await queryRunner.query(
       `SELECT 
         o.id,
-        o.order_number,
+        o.order_number orderNumber,
         o.address,
-        o.subscribe_delivery_time,
-        o.user_id,
+        o.subscribe_delivery_time subscribeDeliveryTime,
+        o.user_id userId,
         os.status,
             JSON_ARRAYAGG(
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
-                  "bookId", oi.book_id
+                  "bookId", oi.book_id bookId
               )
-            ) orderItems
+            ) orderItems,
+      (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -196,6 +223,7 @@ const completeOrders = async (
 
     return order;
   } catch (error) {
+    console.log(error.message);
     await queryRunner.rollbackTransaction();
 
     error = new Error('DATABASE_CONNECTION_ERROR');
@@ -212,7 +240,7 @@ const getOrder = async (orderNumber) => {
   try {
     const [order] = await dataSource.query(
       `
-        SELECT id, order_number, address, subscribe_delivery_time, user_id, order_status_id
+        SELECT id, order_number, address, subscribe_delivery_time, subscribe_cycle_id, user_id, order_status_id
             FROM orders
             WHERE order_number = ?
         `,
@@ -240,13 +268,14 @@ const getOrderStatus = async (userId) => {
               "amount", oi.quantity
             )
           ) books,
-        o.created_at createdAt
+        (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle,
+        date_format(o.created_at, '%Y-%m-%d') createdAt
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         JOIN order_items oi ON oi.order_id = o.id
         JOIN books b ON b.id = oi.book_id
         WHERE o.user_id = ?
-        GROUP BY o.order_number, os.status, o.created_at`,
+        GROUP BY o.order_number, os.status, o.created_at, o.subscribe_cycle_id`,
       [userId]
     );
   } catch (error) {
@@ -260,9 +289,9 @@ const getOrderStatusCount = async (userId) => {
   try {
     const [result] = await dataSource.query(
       `SELECT
-        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PreparingForDelivery,
-        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) Shipping,
-        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) DeliveryCompleted
+        COUNT(CASE WHEN os.id=1 THEN 1 ELSE NULL END) PENDING,
+        COUNT(CASE WHEN os.id=2 THEN 1 ELSE NULL END) SHIPPING,
+        COUNT(CASE WHEN os.id=3 THEN 1 ELSE NULL END) COMPLETE
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         WHERE o.user_id = ?`,
@@ -276,10 +305,33 @@ const getOrderStatusCount = async (userId) => {
   }
 };
 
+const getSubscribeBooks = async (userId) => {
+  try {
+    return dataSource.query(
+      `SELECT
+        b.title,
+        b.thumbnail,
+        b.price,
+        date_format(o.subscribe_delivery_time, '%Y-%m-%d') subscribeDeliveryTime
+        FROM books b
+        JOIN order_items oi ON oi.book_id = b.id
+        JOIN orders o ON o.id = oi.order_id
+        JOIN users u ON u.id = o.user_id
+        WHERE u.id = ? AND b.is_subscribe = TRUE`,
+      [userId]
+    );
+  } catch (error) {
+    error = new Error('INVALID DATA');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   completeOrder,
   completeOrders,
   getOrder,
   getOrderStatus,
   getOrderStatusCount,
+  getSubscribeBooks,
 };

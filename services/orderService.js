@@ -8,6 +8,7 @@ const completeOrder = async (
   user,
   subscribeDeliveryTime,
   bookId,
+  subscribeCycle,
   quantity
 ) => {
   try {
@@ -33,6 +34,7 @@ const completeOrder = async (
       netPoint,
       subscribeDeliveryTime,
       bookId,
+      subscribeCycle,
       quantity
     );
 
@@ -48,7 +50,8 @@ const completeOrders = async (
   address,
   user,
   subscribeDeliveryTime,
-  cartIds
+  cartIds,
+  subscribeCycle
 ) => {
   try {
     let totalPrice = 0;
@@ -75,11 +78,13 @@ const completeOrders = async (
       address,
       netPoint,
       subscribeDeliveryTime,
-      carts
+      carts,
+      subscribeCycle
     );
 
     return order;
   } catch (error) {
+    console.log(error);
     error = new Error(error.message);
     error.statusCode = 400;
     throw error;
@@ -98,10 +103,15 @@ const getOrderStatusCount = async (userId) => {
   return orderDao.getOrderStatusCount(userId);
 };
 
+const getSubscribeBooks = async (userId) => {
+  return orderDao.getSubscribeBooks(userId);
+};
+
 module.exports = {
   completeOrder,
   completeOrders,
   getOrder,
   getOrderStatus,
   getOrderStatusCount,
+  getSubscribeBooks,
 };
