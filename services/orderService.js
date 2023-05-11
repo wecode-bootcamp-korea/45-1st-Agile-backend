@@ -8,6 +8,7 @@ const completeOrder = async (
   user,
   subscribeDeliveryTime,
   bookId,
+  subscribeCycle,
   quantity
 ) => {
   try {
@@ -33,6 +34,7 @@ const completeOrder = async (
       netPoint,
       subscribeDeliveryTime,
       bookId,
+      subscribeCycle,
       quantity
     );
 
@@ -48,7 +50,8 @@ const completeOrders = async (
   address,
   user,
   subscribeDeliveryTime,
-  cartIds
+  cartIds,
+  subscribeCycle
 ) => {
   try {
     let totalPrice = 0;
@@ -75,7 +78,8 @@ const completeOrders = async (
       address,
       netPoint,
       subscribeDeliveryTime,
-      carts
+      carts,
+      subscribeCycle
     );
 
     return order;

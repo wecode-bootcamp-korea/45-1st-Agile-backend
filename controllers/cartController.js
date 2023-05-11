@@ -3,7 +3,7 @@ const { catchAsync } = require('../middlewares/error');
 
 const createCart = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { bookId, amount, isSubscribe } = req.body;
+  const { bookId, amount, isSubscribe, subscribeCycle } = req.body;
 
   if (!bookId || !amount) {
     const error = new Error('KEY_ERROR');
@@ -15,7 +15,8 @@ const createCart = catchAsync(async (req, res) => {
     userId,
     bookId,
     amount,
-    isSubscribe
+    isSubscribe,
+    subscribeCycle
   );
 
   return res.status(201).json({ message: 'PRODUCT_ADDED_TO_CART', data: cart });

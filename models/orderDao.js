@@ -6,13 +6,20 @@ const orderStatusEnum = Object.freeze({
   COMPLETE: 3,
 });
 
+const subscribeCycleEnum = Object.freeze({
+  ONEWEEK: 1,
+  ONEMONTH: 2,
+  THREEMONTHS: 3,
+});
+
 const completeOrder = async (
   userId,
   orderNumber,
   address,
   netPoint,
-  SubscribeDeliveryTime,
+  subscribeDeliveryTime,
   bookId,
+  subscribeCycle,
   quantity
 ) => {
   const queryRunner = dataSource.createQueryRunner();
@@ -31,12 +38,20 @@ const completeOrder = async (
               address,
               user_id,
               subscribe_delivery_time,
-              order_status_id
+              order_status_id,
+              subscribe_cycle_id
               ) VALUES (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId]
+      [
+        orderNumber,
+        address,
+        userId,
+        subscribeDeliveryTime,
+        orderStatusId,
+        subscribeCycleEnum[subscribeCycle],
+      ]
     );
 
     // create order items
@@ -67,6 +82,7 @@ const completeOrder = async (
         o.address,
         o.subscribe_delivery_time subscribeDeliveryTime,
         o.user_id userId,
+        o.subscribe_cycle_id subscribeCycleId,
         os.status,
             JSON_ARRAYAGG(
               JSON_OBJECT(
@@ -74,7 +90,8 @@ const completeOrder = async (
                   "quantity", oi.quantity,
                   "bookId", oi.book_id
               )
-            ) orderItems
+            ) orderItems,
+      (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -99,31 +116,14 @@ const completeOrder = async (
   }
 };
 
-const getOrder = async (orderNumber) => {
-  try {
-    const [order] = await dataSource.query(
-      `
-        SELECT id, order_number orderNumber, address, subscribe_delivery_time subscribeDeliveryTime, user_id userId, order_status_id orderStatusId
-            FROM orders
-            WHERE order_number = ?
-        `,
-      [orderNumber]
-    );
-    return order;
-  } catch (error) {
-    error = new Error('DATABASE_CONNECTION_ERROR');
-    error.statusCode = 400;
-    throw error;
-  }
-};
-
 const completeOrders = async (
   userId,
   orderNumber,
   address,
   netPoint,
-  SubscribeDeliveryTime,
-  carts
+  subscribeDeliveryTime,
+  carts,
+  subscribeCycle
 ) => {
   const queryRunner = dataSource.createQueryRunner();
 
@@ -141,12 +141,20 @@ const completeOrders = async (
               address,
               user_id,
               subscribe_delivery_time,
+              subscribe_cycle_id,
               order_status_id
               ) VALUES (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?
           )
         `,
-      [orderNumber, address, userId, SubscribeDeliveryTime, orderStatusId]
+      [
+        orderNumber,
+        address,
+        userId,
+        subscribeDeliveryTime,
+        subscribeCycleEnum[subscribeCycle],
+        orderStatusId,
+      ]
     );
 
     // create order items
@@ -192,16 +200,17 @@ const completeOrders = async (
         o.id,
         o.order_number orderNumber,
         o.address,
-        o.subscribe_delivery_time subscribeDeliveryTIme,
+        o.subscribe_delivery_time subscribeDeliveryTime,
         o.user_id userId,
         os.status,
             JSON_ARRAYAGG(
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
-                  "bookId", oi.book_id
+                  "bookId", oi.book_id bookId
               )
-            ) orderItems
+            ) orderItems,
+      (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -226,6 +235,31 @@ const completeOrders = async (
   }
 };
 
+const getOrder = async (orderNumber) => {
+  try {
+    const [order] = await dataSource.query(
+      `
+        SELECT
+          id,
+          order_number orderNumber, 
+          address, 
+          subscribe_delivery_time subscribeDeliveryTime, 
+          subscribe_cycle_id subscribeCycleId, 
+          user_id userId, 
+          order_status_id orderStatusId
+        FROM orders
+        WHERE order_number = ?
+        `,
+      [orderNumber]
+    );
+    return order;
+  } catch (error) {
+    error = new Error('DATABASE_CONNECTION_ERROR');
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getOrderStatus = async (userId) => {
   try {
     return dataSource.query(
@@ -240,13 +274,14 @@ const getOrderStatus = async (userId) => {
               "amount", oi.quantity
             )
           ) books,
-        o.created_at createdAt
+        (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle,
+        date_format(o.created_at, '%Y-%m-%d') createdAt
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         JOIN order_items oi ON oi.order_id = o.id
         JOIN books b ON b.id = oi.book_id
         WHERE o.user_id = ?
-        GROUP BY o.order_number, os.status, o.created_at`,
+        GROUP BY o.order_number, os.status, o.created_at, o.subscribe_cycle_id`,
       [userId]
     );
   } catch (error) {
@@ -270,7 +305,6 @@ const getOrderStatusCount = async (userId) => {
     );
     return result;
   } catch (error) {
-    console.log(error);
     error = new Error('INVALID DATA');
     error.statusCode = 400;
     throw error;
@@ -284,7 +318,7 @@ const getSubscribeBooks = async (userId) => {
         b.title,
         b.thumbnail,
         b.price,
-        o.subscribe_delivery_time subscribeDeliveryTime
+        date_format(o.subscribe_delivery_time, '%Y-%m-%d') subscribeDeliveryTime
         FROM books b
         JOIN order_items oi ON oi.book_id = b.id
         JOIN orders o ON o.id = oi.order_id
@@ -306,4 +340,5 @@ module.exports = {
   getOrderStatus,
   getOrderStatusCount,
   getSubscribeBooks,
+  subscribeCycleEnum,
 };

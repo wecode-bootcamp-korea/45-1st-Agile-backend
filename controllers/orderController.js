@@ -3,13 +3,15 @@ const { catchAsync } = require('../middlewares/error');
 
 const completeOrder = catchAsync(async (req, res) => {
   const user = req.user;
-  const { address, subscribeDeliveryTime, bookId, quantity } = req.body;
+  const { address, subscribeDeliveryTime, bookId, subscribeCycle, quantity } =
+    req.body;
 
   const order = await orderService.completeOrder(
     address,
     user,
     subscribeDeliveryTime,
     bookId,
+    subscribeCycle,
     quantity
   );
 
@@ -18,13 +20,14 @@ const completeOrder = catchAsync(async (req, res) => {
 
 const completeOrders = catchAsync(async (req, res) => {
   const user = req.user;
-  const { address, subscribeDeliveryTime, cartIds } = req.body;
+  const { address, subscribeDeliveryTime, cartIds, subscribeCycle } = req.body;
 
   const order = await orderService.completeOrders(
     address,
     user,
     subscribeDeliveryTime,
-    cartIds
+    cartIds,
+    subscribeCycle
   );
 
   return res.status(201).json({ message: 'CREATE SUCCESS', data: order });
