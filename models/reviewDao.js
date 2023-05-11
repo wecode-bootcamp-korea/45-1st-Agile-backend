@@ -30,11 +30,12 @@ const getReviewsByBookId = async (bookId, limit, offset) => {
     return await dataSource.query(
       `
         SELECT 
-            content, 
-            score,
-            created_at createdAt,
-            user_id userId
-        FROM reviews
+            r.content, 
+            r.score,
+            r.created_at createdAt,
+            u.name userName
+        FROM reviews r
+        JOIN users u ON u.id = r.user_id
         WHERE book_id = ?
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?
