@@ -318,10 +318,12 @@ const getSubscribeBooks = async (userId) => {
         b.title,
         b.thumbnail,
         b.price,
-        date_format(o.subscribe_delivery_time, '%Y-%m-%d') subscribeDeliveryTime
+        date_format(o.subscribe_delivery_time, '%Y-%m-%d') subscribeDeliveryTime,
+        sc.delivery_cycle subscribeCycle
         FROM books b
         JOIN order_items oi ON oi.book_id = b.id
         JOIN orders o ON o.id = oi.order_id
+        JOIN subscribe_cycle sc ON o.subscribe_cycle_id = sc.id
         JOIN users u ON u.id = o.user_id
         WHERE u.id = ? AND b.is_subscribe = TRUE`,
       [userId]
