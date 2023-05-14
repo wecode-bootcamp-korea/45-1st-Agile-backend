@@ -38,31 +38,24 @@ const completeOrder = async (
               address,
               user_id,
               subscribe_delivery_time,
-              order_status_id,
-              subscribe_cycle_id
+              order_status_id
               ) VALUES (
-            ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?
           )
         `,
-      [
-        orderNumber,
-        address,
-        userId,
-        subscribeDeliveryTime,
-        orderStatusId,
-        subscribeCycleEnum[subscribeCycle],
-      ]
+      [orderNumber, address, userId, subscribeDeliveryTime, orderStatusId]
     );
 
     // create order items
     await queryRunner.query(
       `INSERT INTO order_items (
         quantity,
+        subscribe_cycle_id,
         book_id,  
         order_id 
-      ) VALUES (?, ?, ?)
+      ) VALUES (?, ?, ?, ?)
       `,
-      [quantity, bookId, result.insertId]
+      [quantity, subscribeCycleEnum[subscribeCycle], bookId, result.insertId]
     );
 
     // update user point
@@ -88,10 +81,10 @@ const completeOrder = async (
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
-                  "bookId", oi.book_id
+                  "bookId", oi.book_id,
+                  "subscribeCycle", (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = oi.subscribe_cycle_id)
               )
-            ) orderItems,
-      (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle
+            ) orderItems
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -153,7 +146,7 @@ const completeOrders = async (
     // create order items
     const orderItems = carts.map((cart) => [
       cart.amount,
-      cart.bookId,
+      cart.cart.bookId,
       result.insertId,
     ]);
     console.log('333333333333333333');
@@ -162,6 +155,7 @@ const completeOrders = async (
     await queryRunner.query(
       `INSERT INTO order_items (
         quantity,
+        subscribe_cycle_id,
         book_id,
         order_id,
       ) VALUES ?

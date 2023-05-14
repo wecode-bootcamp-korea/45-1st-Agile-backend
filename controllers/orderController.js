@@ -20,12 +20,13 @@ const completeOrder = catchAsync(async (req, res) => {
 
 const completeOrders = catchAsync(async (req, res) => {
   const user = req.user;
-  const { address, subscribeDeliveryTime, cartIds } = req.body;
+  const { address, subscribeDeliveryTime, subscribeCycle, cartIds } = req.body;
 
   const order = await orderService.completeOrders(
     address,
     user,
     subscribeDeliveryTime,
+    subscribeCycle,
     cartIds
   );
 
