@@ -75,7 +75,6 @@ const completeOrder = async (
         o.address,
         o.subscribe_delivery_time subscribeDeliveryTime,
         o.user_id userId,
-        o.subscribe_cycle_id subscribeCycleId,
         os.status,
             JSON_ARRAYAGG(
               JSON_OBJECT(
@@ -123,7 +122,7 @@ const completeOrders = async (
   await queryRunner.startTransaction();
 
   const orderStatusId = orderStatusEnum.PENDING;
-  console.log('11111111111111');
+
   try {
     // - create order
     const result = await queryRunner.query(
@@ -141,28 +140,24 @@ const completeOrders = async (
       [orderNumber, address, userId, subscribeDeliveryTime, orderStatusId]
     );
 
-    console.log('22222222222222222');
-
     // create order items
     const orderItems = carts.map((cart) => [
       cart.amount,
-      cart.cart.bookId,
+      cart.subscribe_cycle_id,
+      cart.bookId,
       result.insertId,
     ]);
-    console.log('333333333333333333');
-    console.log(orderItems);
 
     await queryRunner.query(
       `INSERT INTO order_items (
         quantity,
         subscribe_cycle_id,
         book_id,
-        order_id,
+        order_id
       ) VALUES ?
       `,
       [orderItems]
     );
-    console.log('444444444444444444');
 
     // update user point
     await queryRunner.query(
@@ -173,11 +168,9 @@ const completeOrders = async (
         `,
       [netPoint, userId]
     );
-    console.log('55555555555555555');
 
     // delete cart
     const cartIds = carts.map((cart) => cart.id);
-    console.log('66666666666666666');
 
     await queryRunner.query(
       `
@@ -186,7 +179,6 @@ const completeOrders = async (
       `,
       [cartIds]
     );
-    console.log('777777777777777');
 
     const [order] = await queryRunner.query(
       `SELECT 
@@ -200,10 +192,10 @@ const completeOrders = async (
               JSON_OBJECT(
                   "id", oi.id,
                   "quantity", oi.quantity,
-                  "bookId", oi.book_id bookId,
-                  "subscribeCycle", (SELECT sc.delivery_cycle FROM subscribe_cycle sc JOIN carts c ON c.subscribe_cycle_id = sc.id)
+                  "bookId", oi.book_id,
+                  "subscribeCycle", (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = oi.subscribe_cycle_id)
               )
-            ) orderItems,
+            ) orderItems
       FROM orders o
       JOIN order_status os ON o.order_status_id = os.id
       JOIN order_items oi ON oi.order_id = o.id
@@ -211,7 +203,6 @@ const completeOrders = async (
         `,
       [result.insertId]
     );
-    console.log('8888888888888888888');
 
     await queryRunner.commitTransaction();
     getSubscribeBooks;

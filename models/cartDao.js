@@ -78,7 +78,8 @@ const getCartsById = async (cartIds) => {
           c.user_id userId,
           c.book_id bookId,
           b.price,
-          c.is_subscribe isSubscribe
+          c.is_subscribe isSubscribe,
+          c.subscribe_cycle_id
         FROM carts c
         JOIN books b on b.id = c.book_id
         WHERE c.id IN (?)

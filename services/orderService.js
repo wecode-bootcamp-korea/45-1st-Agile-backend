@@ -50,7 +50,6 @@ const completeOrders = async (
   address,
   user,
   subscribeDeliveryTime,
-  subscribeCycle,
   cartIds
 ) => {
   try {
@@ -78,7 +77,6 @@ const completeOrders = async (
       address,
       netPoint,
       subscribeDeliveryTime,
-      subscribeCycle,
       carts
     );
 
