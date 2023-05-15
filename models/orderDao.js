@@ -256,17 +256,17 @@ const getOrderStatus = async (userId) => {
               "title", b.title,
               "thumbnail", b.thumbnail,
               "price", b.price,
-              "amount", oi.quantity
+              "amount", oi.quantity,
+              "subscribeCycle", (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = oi.subscribe_cycle_id)
             )
           ) books,
-        (SELECT sc.delivery_cycle FROM subscribe_cycle sc WHERE sc.id = o.subscribe_cycle_id) subscribeCycle,
         date_format(o.created_at, '%Y-%m-%d') createdAt
         FROM order_status os
         JOIN orders o ON o.order_status_id = os.id
         JOIN order_items oi ON oi.order_id = o.id
         JOIN books b ON b.id = oi.book_id
         WHERE o.user_id = ?
-        GROUP BY o.order_number, os.status, o.created_at, o.subscribe_cycle_id`,
+        GROUP BY o.order_number, os.status, o.created_at, oi.subscribe_cycle_id`,
       [userId]
     );
   } catch (error) {
@@ -308,7 +308,7 @@ const getSubscribeBooks = async (userId) => {
         FROM books b
         JOIN order_items oi ON oi.book_id = b.id
         JOIN orders o ON o.id = oi.order_id
-        JOIN subscribe_cycle sc ON o.subscribe_cycle_id = sc.id
+        JOIN subscribe_cycle sc ON oi.subscribe_cycle_id = sc.id
         JOIN users u ON u.id = o.user_id
         WHERE u.id = ? AND b.is_subscribe = TRUE`,
       [userId]
